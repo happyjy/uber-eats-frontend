@@ -1,16 +1,41 @@
+import { gql, useMutation } from '@apollo/client';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { FormError } from '../components/form-error';
+
+const LOGIN_MUTATION = gql`
+  mutation PoratoMutation($email: String!, $password: String!) {
+    login(input: { email: $email, password: $password }) {
+      ok
+      token
+      error
+    }
+  }
+`;
 
 type TLoginForm = {
-  email?: string;
-  password?: string;
+  email: string;
+  password: string;
 };
 
 export const Login = () => {
-  const { register, handleSubmit, watch, errors } = useForm<TLoginForm>();
-
+  const {
+    register,
+    watch,
+    getValues,
+    handleSubmit,
+    errors,
+  } = useForm<TLoginForm>();
+  const [loginMutation] = useMutation(LOGIN_MUTATION);
   const onSubmit = () => {
     console.log(`### onSubmit fn: ${errors.email}, ${errors.password}`);
+    const { email, password } = getValues();
+    loginMutation({
+      variables: {
+        email,
+        password,
+      },
+    });
   };
 
   return (
@@ -30,9 +55,7 @@ export const Login = () => {
             required
           ></input>
           {errors.email?.message && (
-            <span className="font-medium text-red-500">
-              {errors.email?.message}
-            </span>
+            <FormError errorMessage={errors.email?.message}></FormError>
           )}
           <input
             ref={register({ required: 'Password is required', minLength: 10 })}
@@ -43,14 +66,10 @@ export const Login = () => {
             required
           ></input>
           {errors.password?.message && (
-            <span className="font-medium text-red-500">
-              {errors.password?.message}
-            </span>
+            <FormError errorMessage={errors.password?.message}></FormError>
           )}
           {errors.password?.type === 'minLength' && (
-            <span className="font-medium text-red-500">
-              Password must be more than 10 chars
-            </span>
+            <FormError errorMessage="Password must be more than 10 chars."></FormError>
           )}
           <button className="btn"> Log In </button>
         </form>
