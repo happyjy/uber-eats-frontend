@@ -2,9 +2,13 @@ import { gql, useMutation } from '@apollo/client';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { FormError } from '../components/form-error';
+import {
+  loginMutation,
+  loginMutationVariables,
+} from '../__generated__/loginMutation';
 
 const LOGIN_MUTATION = gql`
-  mutation PoratoMutation($email: String!, $password: String!) {
+  mutation loginMutation($email: String!, $password: String!) {
     login(input: { email: $email, password: $password }) {
       ok
       token
@@ -26,7 +30,9 @@ export const Login = () => {
     handleSubmit,
     errors,
   } = useForm<TLoginForm>();
-  const [loginMutation] = useMutation(LOGIN_MUTATION);
+  const [loginMutation] = useMutation<loginMutation, loginMutationVariables>(
+    LOGIN_MUTATION,
+  );
   const onSubmit = () => {
     console.log(`### onSubmit fn: ${errors.email}, ${errors.password}`);
     const { email, password } = getValues();
