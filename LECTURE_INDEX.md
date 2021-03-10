@@ -17,11 +17,11 @@
 []15.5 Form Login
 []15.6 Login Mutation part One
 []15.7 Apollo Codegen
-[]15.8 Login Mutation
+[]15.8 Login Mutation part One
 []15.9 Login Mutation part Two
-[]15.10 UI Clonning
+[]15.10 UI Clonning part One
 []15.11 UI Clonning part Two
-[]15.12 Create Account Mutation
+[]15.12 Create Account Mutation part One
 []15.13 Create Account Mutation part Two
 []15.14 Saving the Token
 []15.15 Using the Token
