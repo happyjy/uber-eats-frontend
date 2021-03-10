@@ -9,7 +9,7 @@ import {
 
 const LOGIN_MUTATION = gql`
   mutation loginMutation($loginInput: LoginInput!) {
-    login(input: $LoginInput) {
+    login(input: $loginInput) {
       ok
       token
       error
@@ -40,7 +40,7 @@ export const Login = () => {
       console.log(`### onComleted: ${token}`);
     }
   };
-  const [loginMutation, { data: loginMutationResult }] = useMutation<
+  const [loginMutation, { data: loginMutationResult, loading }] = useMutation<
     loginMutation,
     loginMutationVariables
   >(LOGIN_MUTATION, {
@@ -95,7 +95,7 @@ export const Login = () => {
           {errors.password?.type === 'minLength' && (
             <FormError errorMessage="Password must be more than 10 chars."></FormError>
           )}
-          <button className="btn"> Log In </button>
+          <button className="btn">{loading ? 'Loading...' : 'Log In'}</button>
           {loginMutationResult?.login.error && (
             <FormError
               errorMessage={loginMutationResult?.login.error}
