@@ -8,8 +8,8 @@ import {
 } from '../__generated__/loginMutation';
 
 const LOGIN_MUTATION = gql`
-  mutation loginMutation($email: String!, $password: String!) {
-    login(input: { email: $email, password: $password }) {
+  mutation loginMutation($loginInput: LoginInput!) {
+    login(input: $LoginInput) {
       ok
       token
       error
@@ -20,6 +20,7 @@ const LOGIN_MUTATION = gql`
 type TLoginForm = {
   email: string;
   password: string;
+  resultError?: string;
 };
 
 export const Login = () => {
@@ -30,16 +31,33 @@ export const Login = () => {
     handleSubmit,
     errors,
   } = useForm<TLoginForm>();
-  const [loginMutation] = useMutation<loginMutation, loginMutationVariables>(
-    LOGIN_MUTATION,
-  );
+  const onCompleted = (data: loginMutation) => {
+    const {
+      login: { error, ok, token },
+    } = data;
+
+    if (ok) {
+      console.log(`### onComleted: ${token}`);
+    }
+  };
+  const [loginMutation, { data: loginMutationResult }] = useMutation<
+    loginMutation,
+    loginMutationVariables
+  >(LOGIN_MUTATION, {
+    onCompleted,
+    onError: (error) => {
+      console.log(`### onError: ${error}`);
+    },
+  });
   const onSubmit = () => {
     console.log(`### onSubmit fn: ${errors.email}, ${errors.password}`);
     const { email, password } = getValues();
     loginMutation({
       variables: {
-        email,
-        password,
+        loginInput: {
+          email,
+          password,
+        },
       },
     });
   };
@@ -78,6 +96,11 @@ export const Login = () => {
             <FormError errorMessage="Password must be more than 10 chars."></FormError>
           )}
           <button className="btn"> Log In </button>
+          {loginMutationResult?.login.error && (
+            <FormError
+              errorMessage={loginMutationResult?.login.error}
+            ></FormError>
+          )}
         </form>
       </div>
     </div>
