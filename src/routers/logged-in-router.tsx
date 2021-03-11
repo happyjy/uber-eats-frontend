@@ -8,6 +8,7 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
+import { Header } from "../components/header";
 
 const ClientRoutes = [
   <Route path="/" exact>
@@ -38,6 +39,7 @@ export const LoggedInRouter = () => {
   }
   return (
     <Router>
+      <Header />
       <Switch>
         {data.me.role === "Client" && ClientRoutes}
         <Redirect from="/potato" to="/" />
