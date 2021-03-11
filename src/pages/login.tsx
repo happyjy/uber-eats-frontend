@@ -7,6 +7,7 @@ import {
   loginMutationVariables,
 } from '../__generated__/loginMutation';
 import uberLogo from '../images/logo.svg';
+import { Button } from '../components/button';
 
 const LOGIN_MUTATION = gql`
   mutation loginMutation($loginInput: LoginInput!) {
@@ -27,11 +28,14 @@ type TLoginForm = {
 export const Login = () => {
   const {
     register,
-    watch,
     getValues,
     handleSubmit,
     errors,
-  } = useForm<TLoginForm>();
+    formState,
+    // watch,
+  } = useForm<TLoginForm>({
+    mode: 'onChange',
+  });
   const onCompleted = (data: loginMutation) => {
     const {
       login: { error, ok, token },
@@ -69,7 +73,7 @@ export const Login = () => {
         <img src={uberLogo} className="w-52 mb-10"></img>
         <h4 className="w-full text-left text-3xl mb-5"> Welcome back</h4>
         <form
-          className="w-full grid gap-3 mt-5 px-5"
+          className="w-full grid gap-3 mt-5 px-5 mb-5"
           onSubmit={handleSubmit(onSubmit)}
         >
           <input
@@ -97,8 +101,11 @@ export const Login = () => {
           {errors.password?.type === 'minLength' && (
             <FormError errorMessage="Password must be more than 10 chars."></FormError>
           )}
-          <button className="btn">{loading ? 'Loading...' : 'Log In'}</button>
-          {/* <button className="btn">{loading ? 'Loading...' : 'Log In'}</button> */}
+          <Button
+            canClick={formState.isValid}
+            loading={loading}
+            actionText="Log In"
+          ></Button>
           {loginMutationResult?.login.error && (
             <FormError
               errorMessage={loginMutationResult?.login.error}
