@@ -1,15 +1,16 @@
-import React from 'react';
-import { gql, useMutation } from '@apollo/client';
-import { useForm } from 'react-hook-form';
-import { FormError } from '../components/form-error';
+import React from "react";
+import { gql, useMutation } from "@apollo/client";
+import { useForm } from "react-hook-form";
+import { FormError } from "../components/form-error";
 import {
   loginMutation,
   loginMutationVariables,
-} from '../__generated__/loginMutation';
-import uberLogo from '../images/logo.svg';
-import { Button } from '../components/button';
-import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
+} from "../__generated__/loginMutation";
+import uberLogo from "../images/logo.svg";
+import { Button } from "../components/button";
+import { Helmet } from "react-helmet";
+import { Link } from "react-router-dom";
+import { isLoggedInVar } from "../apollo";
 
 const LOGIN_MUTATION = gql`
   mutation loginMutation($loginInput: LoginInput!) {
@@ -36,7 +37,7 @@ export const Login = () => {
     formState,
     // watch,
   } = useForm<TLoginForm>({
-    mode: 'onChange',
+    mode: "onChange",
   });
   const onCompleted = (data: loginMutation) => {
     const {
@@ -44,6 +45,7 @@ export const Login = () => {
     } = data;
 
     if (ok) {
+      isLoggedInVar(true);
       console.log(`### onComleted: ${token}`);
     }
   };
@@ -77,7 +79,7 @@ export const Login = () => {
       <div className="w-full max-w-screen-sm flex flex-col items-center px-5">
         <img src={uberLogo} className="w-52 mb-10"></img>
         <h4 className="w-full text-left text-3xl font-medium mb-5">
-          {' '}
+          {" "}
           Welcome back
         </h4>
         <form
@@ -85,7 +87,7 @@ export const Login = () => {
           onSubmit={handleSubmit(onSubmit)}
         >
           <input
-            ref={register({ required: 'Email is required' })}
+            ref={register({ required: "Email is required" })}
             name="email"
             type="email"
             placeholder="Email"
@@ -96,7 +98,7 @@ export const Login = () => {
             <FormError errorMessage={errors.email?.message}></FormError>
           )}
           <input
-            ref={register({ required: 'Password is required', minLength: 10 })}
+            ref={register({ required: "Password is required", minLength: 10 })}
             name="password"
             type="password"
             placeholder="Password"
@@ -106,7 +108,7 @@ export const Login = () => {
           {errors.password?.message && (
             <FormError errorMessage={errors.password?.message}></FormError>
           )}
-          {errors.password?.type === 'minLength' && (
+          {errors.password?.type === "minLength" && (
             <FormError errorMessage="Password must be more than 10 chars."></FormError>
           )}
           <Button
@@ -121,7 +123,7 @@ export const Login = () => {
           )}
         </form>
         <div>
-          New to Nuber?{' '}
+          New to Nuber?{" "}
           <Link to="/create-account" className="text-lime-600 hover:underline">
             Create an Account
           </Link>

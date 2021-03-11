@@ -1,19 +1,19 @@
-import React from 'react';
-import { gql, useMutation } from '@apollo/client';
-import { useForm } from 'react-hook-form';
-import { FormError } from '../components/form-error';
+import React from "react";
+import { gql, useMutation } from "@apollo/client";
+import { useForm } from "react-hook-form";
+import { FormError } from "../components/form-error";
 import {
   loginMutation,
   loginMutationVariables,
-} from '../__generated__/loginMutation';
-import uberLogo from '../images/logo.svg';
-import { Button } from '../components/button';
-import { UserRole } from '../__generated__/globalTypes';
+} from "../__generated__/loginMutation";
+import uberLogo from "../images/logo.svg";
+import { Button } from "../components/button";
+import { UserRole } from "../__generated__/globalTypes";
 import {
   createAccountMutation,
   createAccountMutationVariables,
-} from '../__generated__/createAccountMutation';
-import { Link } from 'react-router-dom';
+} from "../__generated__/createAccountMutation";
+import { Link, useHistory } from "react-router-dom";
 
 const CREATE_ACCOUNT_MUTATION = gql`
   mutation createAccountMutation($createAccountInput: CreateAccountInput!) {
@@ -39,34 +39,45 @@ export const CreateAccount = () => {
     errors,
     formState,
   } = useForm<ICreateAccountForm>({
-    mode: 'onChange',
+    mode: "onChange",
     defaultValues: {
       role: UserRole.Client,
     },
   });
+  const history = useHistory();
+  const onCompleted = (data: createAccountMutation) => {
+    const {
+      createAccount: { ok },
+    } = data;
+    if (ok) {
+      history.push("/login");
+    }
+  };
   const [
     createAccountMutation,
     { data: createAccountMutationResult, loading },
   ] = useMutation<createAccountMutation, createAccountMutationVariables>(
     CREATE_ACCOUNT_MUTATION,
     {
+      onCompleted,
       onError: (error) => {
         console.log(`### onError: ${error}`);
       },
     },
   );
   const onSubmit = () => {
-    console.log(`### onSubmit fn: ${errors.email}, ${errors.password}`);
-    const { email, password, role } = getValues();
-    createAccountMutation({
-      variables: {
-        createAccountInput: {
-          email,
-          password,
-          role,
+    if (!loading) {
+      const { email, password, role } = getValues();
+      createAccountMutation({
+        variables: {
+          createAccountInput: {
+            email,
+            password,
+            role,
+          },
         },
-      },
-    });
+      });
+    }
   };
 
   return (
@@ -81,7 +92,10 @@ export const CreateAccount = () => {
           onSubmit={handleSubmit(onSubmit)}
         >
           <input
-            ref={register({ required: 'Email is required' })}
+            ref={register({
+              required: "Email is required",
+              pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+            })}
             name="email"
             type="email"
             placeholder="Email"
@@ -91,8 +105,11 @@ export const CreateAccount = () => {
           {errors.email?.message && (
             <FormError errorMessage={errors.email?.message}></FormError>
           )}
+          {errors.email?.type === "pattern" && (
+            <FormError errorMessage={"Please enter a valid email"}></FormError>
+          )}
           <input
-            ref={register({ required: 'Password is required', minLength: 10 })}
+            ref={register({ required: "Password is required", minLength: 10 })}
             name="password"
             type="password"
             placeholder="Password"
@@ -102,7 +119,7 @@ export const CreateAccount = () => {
           {errors.password?.message && (
             <FormError errorMessage={errors.password?.message}></FormError>
           )}
-          {errors.password?.type === 'minLength' && (
+          {errors.password?.type === "minLength" && (
             <FormError errorMessage="Password must be more than 10 chars."></FormError>
           )}
           <select
@@ -116,12 +133,17 @@ export const CreateAccount = () => {
           </select>
           <Button
             canClick={formState.isValid}
-            loading={false}
-            actionText={'Create Account'}
+            loading={loading}
+            actionText={"Create Account"}
           />
+          {createAccountMutationResult?.createAccount.error && (
+            <FormError
+              errorMessage={createAccountMutationResult.createAccount.error}
+            />
+          )}
         </form>
         <div>
-          Already have an account?{' '}
+          Already have an account?{" "}
           <Link to="/login" className="text-lime-600 hover:underline">
             Log in now
           </Link>
