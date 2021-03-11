@@ -9,7 +9,7 @@ import {
 import uberLogo from "../images/logo.svg";
 import { Button } from "../components/button";
 import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { authTokenVar } from "../apollo";
 import { LOCALSTORAGE_TOKEN } from "../constants";
 
@@ -22,7 +22,6 @@ const LOGIN_MUTATION = gql`
     }
   }
 `;
-
 type TLoginForm = {
   email: string;
   password: string;
