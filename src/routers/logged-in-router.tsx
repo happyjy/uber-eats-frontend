@@ -9,6 +9,7 @@ import {
   Switch,
 } from "react-router-dom";
 import { Header } from "../components/header";
+import { useMe } from "../hooks/useMe";
 
 const ClientRoutes = [
   <Route path="/" exact>
@@ -16,19 +17,8 @@ const ClientRoutes = [
   </Route>,
 ];
 
-const ME_QUERY = gql`
-  query meQuery {
-    me {
-      id
-      email
-      role
-      verified
-    }
-  }
-`;
-
 export const LoggedInRouter = () => {
-  const { data, loading, error } = useQuery<meQuery>(ME_QUERY);
+  const { data, loading, error } = useMe();
   console.log("### data: ", data);
   if (!data || loading || error) {
     return (
@@ -42,7 +32,7 @@ export const LoggedInRouter = () => {
       <Header />
       <Switch>
         {data.me.role === "Client" && ClientRoutes}
-        <Redirect from="/potato" to="/" />
+        <Redirect to="/" />
       </Switch>
     </Router>
   );

@@ -9,7 +9,7 @@ import {
 import uberLogo from "../images/logo.svg";
 import { Button } from "../components/button";
 import { Helmet } from "react-helmet-async";
-import { Link, useHistory } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import { authTokenVar } from "../apollo";
 import { LOCALSTORAGE_TOKEN } from "../constants";
 
@@ -47,6 +47,7 @@ export const Login = () => {
     if (ok && token) {
       localStorage.setItem(LOCALSTORAGE_TOKEN, token);
       authTokenVar(token);
+      <Redirect to="/" />;
       console.log(`### onComleted: ${token}`);
     }
   };
