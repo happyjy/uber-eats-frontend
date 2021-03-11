@@ -8,6 +8,8 @@ import {
 } from '../__generated__/loginMutation';
 import uberLogo from '../images/logo.svg';
 import { Button } from '../components/button';
+import { Helmet } from 'react-helmet';
+import { Link } from 'react-router-dom';
 
 const LOGIN_MUTATION = gql`
   mutation loginMutation($loginInput: LoginInput!) {
@@ -69,9 +71,15 @@ export const Login = () => {
 
   return (
     <div className="h-screen flex flex-col items-center mt-10 lg:mt-28">
+      <Helmet>
+        <title> Login | Uber Eats </title>
+      </Helmet>
       <div className="w-full max-w-screen-sm flex flex-col items-center px-5">
         <img src={uberLogo} className="w-52 mb-10"></img>
-        <h4 className="w-full text-left text-3xl mb-5"> Welcome back</h4>
+        <h4 className="w-full text-left text-3xl font-medium mb-5">
+          {' '}
+          Welcome back
+        </h4>
         <form
           className="w-full grid gap-3 mt-5 px-5 mb-5"
           onSubmit={handleSubmit(onSubmit)}
@@ -112,6 +120,12 @@ export const Login = () => {
             ></FormError>
           )}
         </form>
+        <div>
+          New to Nuber?{' '}
+          <Link to="/create-account" className="text-lime-600 hover:underline">
+            Create an Account
+          </Link>
+        </div>
       </div>
     </div>
   );
