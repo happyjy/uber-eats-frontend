@@ -1,10 +1,16 @@
-import { ApolloClient, InMemoryCache, makeVar } from '@apollo/client';
+import { ApolloClient, InMemoryCache, makeVar } from "@apollo/client";
+import { LOCALSTORAGE_TOKEN } from "./constants";
 
-export const isLoggedInVar = makeVar(false);
+const token = localStorage.getItem(LOCALSTORAGE_TOKEN);
+export const isLoggedInVar = makeVar(Boolean(token));
+export const authTokenVar = makeVar(token);
+
+console.log("### default value of isLoggedInVar is:", isLoggedInVar());
+console.log("### default value of authTokenVar is:", authTokenVar());
 
 export const client = new ApolloClient({
   // uber-eats-backend url
-  uri: 'http://localhost:4000/graphql',
+  uri: "http://localhost:4000/graphql",
   cache: new InMemoryCache({
     typePolicies: {
       Query: {
@@ -12,11 +18,15 @@ export const client = new ApolloClient({
           isLoggedIn: {
             read() {
               return isLoggedInVar();
-            }
-          }
-        }
-      }
-    }
-  })
+            },
+          },
+          token: {
+            read() {
+              return authTokenVar();
+            },
+          },
+        },
+      },
+    },
+  }),
 });
-

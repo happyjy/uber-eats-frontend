@@ -8,9 +8,10 @@ import {
 } from "../__generated__/loginMutation";
 import uberLogo from "../images/logo.svg";
 import { Button } from "../components/button";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
-import { isLoggedInVar } from "../apollo";
+import { authTokenVar } from "../apollo";
+import { LOCALSTORAGE_TOKEN } from "../constants";
 
 const LOGIN_MUTATION = gql`
   mutation loginMutation($loginInput: LoginInput!) {
@@ -41,11 +42,12 @@ export const Login = () => {
   });
   const onCompleted = (data: loginMutation) => {
     const {
-      login: { error, ok, token },
+      login: { /* error, */ ok, token },
     } = data;
 
-    if (ok) {
-      isLoggedInVar(true);
+    if (ok && token) {
+      localStorage.setItem(LOCALSTORAGE_TOKEN, token);
+      authTokenVar(token);
       console.log(`### onComleted: ${token}`);
     }
   };
@@ -77,7 +79,7 @@ export const Login = () => {
         <title> Login | Uber Eats </title>
       </Helmet>
       <div className="w-full max-w-screen-sm flex flex-col items-center px-5">
-        <img src={uberLogo} className="w-52 mb-10"></img>
+        <img src={uberLogo} className="w-52 mb-10" alt="Nuber Eats"></img>
         <h4 className="w-full text-left text-3xl font-medium mb-5">
           {" "}
           Welcome back
@@ -87,7 +89,10 @@ export const Login = () => {
           onSubmit={handleSubmit(onSubmit)}
         >
           <input
-            ref={register({ required: "Email is required" })}
+            ref={register({
+              required: "Email is required",
+              pattern: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+            })}
             name="email"
             type="email"
             placeholder="Email"

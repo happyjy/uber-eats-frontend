@@ -2,10 +2,6 @@ import React from "react";
 import { gql, useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
-import {
-  loginMutation,
-  loginMutationVariables,
-} from "../__generated__/loginMutation";
 import uberLogo from "../images/logo.svg";
 import { Button } from "../components/button";
 import { UserRole } from "../__generated__/globalTypes";
@@ -14,6 +10,7 @@ import {
   createAccountMutationVariables,
 } from "../__generated__/createAccountMutation";
 import { Link, useHistory } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const CREATE_ACCOUNT_MUTATION = gql`
   mutation createAccountMutation($createAccountInput: CreateAccountInput!) {
@@ -35,7 +32,7 @@ export const CreateAccount = () => {
     register,
     getValues,
     handleSubmit,
-    watch,
+    // watch,
     errors,
     formState,
   } = useForm<ICreateAccountForm>({
@@ -50,6 +47,7 @@ export const CreateAccount = () => {
       createAccount: { ok },
     } = data;
     if (ok) {
+      alert("Account Created! Log in now!");
       history.push("/login");
     }
   };
@@ -82,8 +80,11 @@ export const CreateAccount = () => {
 
   return (
     <div className="h-screen flex flex-col items-center mt-10 lg:mt-28">
+      <Helmet>
+        <title>Create Account | Nuber Eats</title>
+      </Helmet>
       <div className="w-full max-w-screen-sm flex flex-col items-center px-5">
-        <img src={uberLogo} className="w-52 mb-10"></img>
+        <img src={uberLogo} className="w-52 mb-10" alt="Uber Eats"></img>
         <h4 className="w-full text-left text-3xl font-medium mb-5">
           Let's get started
         </h4>
@@ -94,7 +95,7 @@ export const CreateAccount = () => {
           <input
             ref={register({
               required: "Email is required",
-              pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+              pattern: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
             })}
             name="email"
             type="email"
