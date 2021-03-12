@@ -24,6 +24,10 @@ export interface LoginInput {
   password?: string | null;
 }
 
+export interface VerifyEmailInput {
+  code: string;
+}
+
 //==============================================================
 // END Enums and Input Objects
 //==============================================================
