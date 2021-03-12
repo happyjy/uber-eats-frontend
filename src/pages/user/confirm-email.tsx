@@ -1,5 +1,6 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql, useApolloClient, useMutation } from "@apollo/client";
 import React, { useEffect } from "react";
+import { useMe } from "../../hooks/useMe";
 import {
   verifyEmail,
   verifyEmailVariables,
@@ -15,10 +16,32 @@ const VERIFY_EMAIL_MUTATION = gql`
 `;
 
 export const ConfirmEmail = () => {
+  const { data: userData } = useMe();
+  const client = useApolloClient();
+  const onCompleted = (data: verifyEmail) => {
+    const {
+      verifyEmail: { ok },
+    } = data;
+    if (ok && userData?.me.id) {
+      client.writeFragment({
+        id: `User:${userData.me.id}`,
+        fragment: gql`
+          fragment VerifiedUser on User {
+            verified
+          }
+        `,
+        data: {
+          verified: true,
+        },
+      });
+    }
+  };
   const [verifyEmail, { loading: verifyingEmail }] = useMutation<
     verifyEmail,
     verifyEmailVariables
-  >(VERIFY_EMAIL_MUTATION);
+  >(VERIFY_EMAIL_MUTATION, {
+    onCompleted,
+  });
   // # email로 email confirm하는 link 이메일이 전송되고 클릭하면 자동으로 confirm 되는 것이 기획
   //   ㄴ 그래서 현재 화면이 화면이 loading 다 되면 verifyEmail query를 req
   // # useEffect
