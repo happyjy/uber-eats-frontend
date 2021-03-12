@@ -10,7 +10,7 @@ import uberLogo from "../images/logo.svg";
 import { Button } from "../components/button";
 import { Helmet } from "react-helmet-async";
 import { Link, Redirect, useHistory } from "react-router-dom";
-import { authTokenVar } from "../apollo";
+import { authTokenVar, isLoggedInVar } from "../apollo";
 import { LOCALSTORAGE_TOKEN } from "../constants";
 
 const LOGIN_MUTATION = gql`
@@ -39,6 +39,7 @@ export const Login = () => {
   } = useForm<TLoginForm>({
     mode: "onChange",
   });
+  // const history = useHistory();
   const onCompleted = (data: loginMutation) => {
     const {
       login: { /* error, */ ok, token },
@@ -47,7 +48,8 @@ export const Login = () => {
     if (ok && token) {
       localStorage.setItem(LOCALSTORAGE_TOKEN, token);
       authTokenVar(token);
-      <Redirect to="/" />;
+      isLoggedInVar(true);
+      // history.push("/");
       console.log(`### onComleted: ${token}`);
     }
   };
