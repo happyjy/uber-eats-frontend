@@ -30,6 +30,10 @@ export interface LoginInput {
   password?: string | null;
 }
 
+export interface RestaurantsInput {
+  page?: number | null;
+}
+
 export interface VerifyEmailInput {
   code: string;
 }
