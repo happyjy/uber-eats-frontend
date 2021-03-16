@@ -19,7 +19,7 @@
 [x]15.7 Apollo Codegen
 [x]15.8 Login Mutation part One
 [x]15.9 Login Mutation part Two
-[x]15.10 UI Clonning part One
+[x]15.10 UI Clonning part Onew
 [x]15.11 UI Clonning part Two
 [x]15.12 Create Account Mutation part One
 [x]15.13 Create Account Mutation part Two
