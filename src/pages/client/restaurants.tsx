@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
+import { Pagination } from "../../components/pagiantion";
 import { Restaurant } from "../../components/restaurant";
 import { CATEGORY_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 import {
@@ -111,36 +112,23 @@ export const Restaurants = () => {
               </Link>
             ))}
           </div>
-          <div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
+          <div className="grid md:grid-cols-3 gap-x-5 gap-y-10 mt-16">
             {data?.restaurants.results?.map((restaurant) => (
               <Restaurant
                 id={restaurant.id + ""}
                 coverImg={restaurant.coverImg}
                 name={restaurant.name}
                 categoryName={restaurant.category?.name}
+                address={restaurant.address}
               />
             ))}
           </div>
-          <div className="max-w-md grid grid-cols-3 text-center mx-auto mt-10">
-            {page > 1 ? (
-              <button onClick={onPrevPageClick} className="">
-                &larr;
-              </button>
-            ) : (
-              <div></div>
-            )}
-            <span>
-              {" "}
-              Page {page} of {data?.restaurants.totalPages}
-            </span>
-            {page !== data?.restaurants.totalPages ? (
-              <button onClick={onNextPageClick} className="">
-                &rarr;
-              </button>
-            ) : (
-              <div></div>
-            )}
-          </div>
+          <Pagination
+            onPrevPageClick={onPrevPageClick}
+            onNextPageClick={onNextPageClick}
+            page={page}
+            totalPages={data?.restaurants.totalPages}
+          />
         </div>
       )}
     </div>
