@@ -30,21 +30,21 @@
 [x]15.18 Header part One
 
 16 USER PAGES
-[]16.0 Verifying Email part One
-[]16.1 Verifying Email part Two
-[]16.2 Edit Profile part One
-[]16.3 Edit Profile part Two
-[]16.4 writeFragment vs Refetch
+[x]16.0 Verifying Email part One
+[x]16.1 Verifying Email part Two
+[x]16.2 Edit Profile part One
+[x]16.3 Edit Profile part Two
+[x]16.4 writeFragment vs Refetch
 
 17 RESTAURANTS
-[]17.0 Restaurants Query
-[]17.1 Categories Style
-[]17.2 Restaurants List
-[]17.3 Restaurants Pagination
-[]17.4 Search part One
-[]17.5 Search part Two
-[]17.6 Category
-[]17.7 Code Challenge
+[x]17.0 Restaurants Query
+[x]17.1 Categories Style
+[x]17.2 Restaurants List
+[x]17.3 Restaurants Pagination
+[x]17.4 Search part One
+[x]17.5 Search part Two
+[x]17.6 Category
+[]17.7 Code Challenge(category 화면 구현)
 []17.8 Restaurant part One
 []17.9 Restaurant part Two
 

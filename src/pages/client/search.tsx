@@ -9,6 +9,7 @@ import {
 } from "../../__generated__/searchRestaurant";
 
 const SEARCH_RESTAURANT = gql`
+  ${RESTAURANT_FRAGMENT}
   query searchRestaurant($input: SearchRestaurantInput!) {
     searchRestaurant(input: $input) {
       ok
@@ -19,7 +20,6 @@ const SEARCH_RESTAURANT = gql`
       }
     }
   }
-  ${RESTAURANT_FRAGMENT}
 `;
 
 export const Search = () => {
