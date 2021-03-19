@@ -9,7 +9,7 @@ import {
 import uberLogo from "../images/logo.svg";
 import { Button } from "../components/button";
 import { Helmet } from "react-helmet-async";
-import { Link, Redirect, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { authTokenVar, isLoggedInVar } from "../apollo";
 import { LOCALSTORAGE_TOKEN } from "../constants";
 
@@ -101,8 +101,11 @@ export const Login = () => {
             className="input"
             required
           ></input>
+          {errors.email?.type === "pattern" && (
+            <FormError errorMessage={"Please enter a valid email"} />
+          )}
           {errors.email?.message && (
-            <FormError errorMessage={errors.email?.message}></FormError>
+            <FormError errorMessage={errors.email?.message} />
           )}
           <input
             ref={register({ required: "Password is required", minLength: 10 })}
@@ -113,10 +116,10 @@ export const Login = () => {
             required
           ></input>
           {errors.password?.message && (
-            <FormError errorMessage={errors.password?.message}></FormError>
+            <FormError errorMessage={errors.password?.message} />
           )}
           {errors.password?.type === "minLength" && (
-            <FormError errorMessage="Password must be more than 10 chars."></FormError>
+            <FormError errorMessage="Password must be more than 10 chars." />
           )}
           <Button
             canClick={formState.isValid}
@@ -124,9 +127,7 @@ export const Login = () => {
             actionText="Log In"
           ></Button>
           {loginMutationResult?.login.error && (
-            <FormError
-              errorMessage={loginMutationResult?.login.error}
-            ></FormError>
+            <FormError errorMessage={loginMutationResult?.login.error} />
           )}
         </form>
         <div>

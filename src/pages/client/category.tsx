@@ -7,7 +7,7 @@ import {
   categoryQueryVariables,
 } from "../../__generated__/categoryQuery";
 import { Restaurant } from "../../components/restaurant";
-import { Pagination } from "../../components/pagiantion";
+import { Pagination } from "../../components/pagination";
 
 const CATEGORY_QUERY = gql`
   ${RESTAURANT_FRAGMENT}
