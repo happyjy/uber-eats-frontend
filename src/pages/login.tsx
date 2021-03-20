@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 import { authTokenVar, isLoggedInVar } from "../apollo";
 import { LOCALSTORAGE_TOKEN } from "../constants";
 
-const LOGIN_MUTATION = gql`
+export const LOGIN_MUTATION = gql`
   mutation loginMutation($loginInput: LoginInput!) {
     login(input: $loginInput) {
       ok
@@ -45,12 +45,14 @@ export const Login = () => {
       login: { /* error, */ ok, token },
     } = data;
 
+    console.log("### login > onCompleted > data: ", data);
+
     if (ok && token) {
       localStorage.setItem(LOCALSTORAGE_TOKEN, token);
       authTokenVar(token);
       isLoggedInVar(true);
       // history.push("/");
-      console.log(`### onComleted: ${token}`);
+      console.log(`### login > onComleted > token: ${token}`);
     }
   };
   const [loginMutation, { data: loginMutationResult, loading }] = useMutation<
@@ -63,8 +65,8 @@ export const Login = () => {
     },
   });
   const onSubmit = () => {
-    console.log(`### onSubmit fn: ${errors.email}, ${errors.password}`);
     const { email, password } = getValues();
+    console.log(`### login > onSubmit > email, pw: ${email}, ${password}`);
     loginMutation({
       variables: {
         loginInput: {
@@ -117,9 +119,6 @@ export const Login = () => {
           ></input>
           {errors.password?.message && (
             <FormError errorMessage={errors.password?.message} />
-          )}
-          {errors.password?.type === "minLength" && (
-            <FormError errorMessage="Password must be more than 10 chars." />
           )}
           <Button
             canClick={formState.isValid}

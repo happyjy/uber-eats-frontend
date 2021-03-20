@@ -1,5 +1,5 @@
 import { render, waitFor } from "@testing-library/react";
-import { NotFound } from "../../pages/pages/404";
+import { NotFound } from "../../pages/404";
 import { BrowserRouter as Router } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 
