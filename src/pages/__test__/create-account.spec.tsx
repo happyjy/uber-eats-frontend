@@ -5,6 +5,20 @@ import { CreateAccount, CREATE_ACCOUNT_MUTATION } from "../create-account";
 import userEvent from "@testing-library/user-event";
 import { UserRole } from "../../__generated__/globalTypes";
 
+const mockPush = jest.fn();
+
+jest.mock("react-router-dom", () => {
+  const realModule = jest.requireActual("react-router-dom");
+  return {
+    ...realModule,
+    useHistory: () => {
+      return {
+        push: mockPush,
+      };
+    },
+  };
+});
+
 let mockedClient: MockApolloClient;
 let renderResult: RenderResult;
 
@@ -89,5 +103,11 @@ it("submits mutation with form values", async () => {
   });
   expect(window.alert).toHaveBeenCalledWith("Account Created! Log in now!");
   const mutationError = getByRole("alert");
+  expect(mockPush).toHaveBeenCalledWith("/");
+
   expect(mutationError).toHaveTextContent("mutation-error");
+});
+
+afterAll(() => {
+  jest.clearAllMocks();
 });
