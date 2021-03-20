@@ -33,7 +33,7 @@ it("renders verify banner", async () => {
     );
 
     // render의 result를 기다렸다가 수행하기 위한 코드
-    await new Promise((resovle) => setTimeout(resovle, 0));
+    // await new Promise((resolve) => setTimeout(resolve, 0));
     expect(queryByText("Please verify your email"));
   });
 });

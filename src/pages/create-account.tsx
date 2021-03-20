@@ -12,7 +12,7 @@ import {
 import { Link, useHistory } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 
-const CREATE_ACCOUNT_MUTATION = gql`
+export const CREATE_ACCOUNT_MUTATION = gql`
   mutation createAccountMutation($createAccountInput: CreateAccountInput!) {
     createAccount(input: $createAccountInput) {
       ok
