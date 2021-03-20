@@ -83,7 +83,7 @@ export const Login = () => {
         <title> Login | Uber Eats </title>
       </Helmet>
       <div className="w-full max-w-screen-sm flex flex-col items-center px-5">
-        <img src={uberLogo} className="w-52 mb-10" alt="Nuber Eats"></img>
+        <img src={uberLogo} className="w-52 mb-10" alt="Uber Eats"></img>
         <h4 className="w-full text-left text-3xl font-medium mb-5">
           {" "}
           Welcome back

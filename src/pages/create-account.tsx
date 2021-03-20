@@ -81,7 +81,7 @@ export const CreateAccount = () => {
   return (
     <div className="h-screen flex flex-col items-center mt-10 lg:mt-28">
       <Helmet>
-        <title>Create Account | Nuber Eats</title>
+        <title>Create Account | Uber Eats</title>
       </Helmet>
       <div className="w-full max-w-screen-sm flex flex-col items-center px-5">
         <img src={uberLogo} className="w-52 mb-10" alt="Uber Eats"></img>
@@ -110,7 +110,7 @@ export const CreateAccount = () => {
             <FormError errorMessage={"Please enter a valid email"}></FormError>
           )}
           <input
-            ref={register({ required: "Password is required", minLength: 10 })}
+            ref={register({ required: "Password is required" })}
             name="password"
             type="password"
             placeholder="Password"
@@ -120,9 +120,7 @@ export const CreateAccount = () => {
           {errors.password?.message && (
             <FormError errorMessage={errors.password?.message}></FormError>
           )}
-          {errors.password?.type === "minLength" && (
-            <FormError errorMessage="Password must be more than 10 chars."></FormError>
-          )}
+
           <select
             name="role"
             ref={register({ required: true })}
