@@ -73,7 +73,7 @@ describe("<Login />", () => {
         login: {
           ok: true,
           token: "XXX",
-          error: null,
+          error: "mutation-error",
         },
       },
     });
@@ -92,5 +92,8 @@ describe("<Login />", () => {
         password: formData.password,
       },
     });
+    const errorMessage = getByRole("alert");
+    expect(errorMessage).toHaveTextContent(/mutation-error/i);
+    expect(localStorage.setItem).toHaveBeenCalledWith("uber-token", "XXX");
   });
 });
