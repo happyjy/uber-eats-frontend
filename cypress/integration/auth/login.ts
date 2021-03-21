@@ -17,14 +17,8 @@ describe("Log In", () => {
     user.findByRole("alert").should("have.text", "Password is required");
   });
   it("can fill out the form and log in", () => {
-    user.visit("/");
-    user.findByPlaceholderText(/email/i).type("happyUberClient@gmail.com");
-    user.findByPlaceholderText(/password/i).type("123123123");
-    user
-      .findByRole("button")
-      .should("not.have.class", "pointer-events-none")
-      .click();
-    user.window().its("localStorage.uber-token").should("be.a", "string");
+    // @ts-ignore
+    user.login("happyUberClient@gmail.com", "123123123");
   });
   it("sign up", () => {
     user.visit("/create-account");

@@ -38,10 +38,7 @@ describe("Log In", () => {
 
     user.wait(1000);
 
-    user.title().should("eq", "Login | Uber Eats");
-    user.findByPlaceholderText(/email/i).type("happyUberClient@gmail.com");
-    user.findByPlaceholderText(/password/i).type("123123123");
-    user.findByRole("button").click();
-    user.window().its("localStorage.uber-token").should("be.a", "string");
+    // @ts-ignore
+    user.login("happyUberClient@gmail.com", "123123123");
   });
 });
