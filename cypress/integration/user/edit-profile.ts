@@ -10,6 +10,12 @@ describe("Edit Profile", () => {
     user.title().should("eq", "Edit Profile | Uber Eats");
   });
   it("can change email", () => {
+    user.intercept("POST", "http://localhost:4000/graphql", (req) => {
+      if (req.body?.operationName === "editProfile") {
+        // @ts-ignore
+        req.body?.variables?.input?.email = "happyUberClient@gmail.com";
+      }
+    });
     user.visit("/edit-profile");
     user
       .findByPlaceholderText(/email/i)
