@@ -3,13 +3,6 @@ describe("Log In", () => {
   it("should see login page", () => {
     cy.visit("/").title().should("eq", "Login | Uber Eats");
   });
-  it("can fill out the form", () => {
-    cy.visit("/");
-    cy.findByPlaceholderText(/email/i).type("jyoon@gmail.co");
-    cy.findByPlaceholderText(/password/i).type("12345");
-    cy.findByRole("button").should("not.have.class", "pointer-events-none");
-    // to do (can log in)
-  });
   it("can see email / password validation errors", () => {
     user.visit("/");
     user.findByPlaceholderText(/email/i).type("bad@email");
@@ -23,7 +16,7 @@ describe("Log In", () => {
       .clear();
     user.findByRole("alert").should("have.text", "Password is required");
   });
-  it("can fill out the form", () => {
+  it("can fill out the form and log in", () => {
     user.visit("/");
     user.findByPlaceholderText(/email/i).type("happyUberClient@gmail.com");
     user.findByPlaceholderText(/password/i).type("123123123");
