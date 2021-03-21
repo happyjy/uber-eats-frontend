@@ -15,16 +15,33 @@ describe("Log In", () => {
     user.findByRole("alert").should("have.text", "Password is required");
   });
   it("can see email / password validation errors", () => {
+    user.intercept("http://localhost:4000/graphql", (req) => {
+      const { operationName } = req.body;
+      if (operationName && operationName === "createAccountMutation") {
+        req.reply((res) => {
+          res.send({
+            data: {
+              createAccount: {
+                ok: true,
+                error: null,
+                __typename: "CreateAccountOutput",
+              },
+            },
+          });
+        });
+      }
+    });
     user.visit("/create-account");
-    user.findByPlaceholderText(/email/i).type("33333@mail.com");
-    user.findByPlaceholderText(/password/i).type("real@mail.com");
+    user.findByPlaceholderText(/email/i).type("jyoon@gmail.com");
+    user.findByPlaceholderText(/password/i).type("121212");
     user.findByRole("button").click();
 
     user.wait(1000);
 
-    user.findByPlaceholderText(/email/i).type("33333@mail.com");
-    user.findByPlaceholderText(/password/i).type("real@mail.com");
+    user.title().should("eq", "Login | Uber Eats");
+    user.findByPlaceholderText(/email/i).type("happyUberClient@gmail.com");
+    user.findByPlaceholderText(/password/i).type("123123123");
     user.findByRole("button").click();
-    user.window().its("localStorage.nuber-token").should("be.a", "string");
+    user.window().its("localStorage.uber-token").should("be.a", "string");
   });
 });
