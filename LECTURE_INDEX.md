@@ -44,23 +44,23 @@
 [x]17.4 Search part One
 [x]17.5 Search part Two
 [x]17.6 Category
-[]17.7 Code Challenge(category 화면 구현)
-[]17.8 Restaurant part One
-[]17.9 Restaurant part Two
+[x]17.7 Code Challenge(category 화면 구현)
+[x]17.8 Restaurant part One
+[x]17.9 Restaurant part Two
 
 18 TESTING REACT COMPONENTS
-[]18.0 Tests Setup
-[]18.1 App Tests
-[]18.2 Button Tests
-[]18.3 FormError and Restaurant Tests
-[]18.4 Testing Header and 404
-[]18.5 Login Tests part One
-[]18.6 Login Tests part Two
-[]18.7 Login Tests part Three
-[]18.8 CreateAccount Tests part One
-[]18.9 CreateAccount Tests part Two
-[]18.10 CreateAccount Tests part Three
-[]18.11 Conclusions
+[x]18.0 Tests Setup
+[x]18.1 App Tests
+[x]18.2 Button Tests
+[x]18.3 FormError and Restaurant Tests
+[x]18.4 Testing Header and 404
+[x]18.5 Login Tests part One
+[x]18.6 Login Tests part Two
+[x]18.7 Login Tests part Three
+[x]18.8 CreateAccount Tests part One
+[x]18.9 CreateAccount Tests part Two
+[x]18.10 CreateAccount Tests part Three
+[x]18.11 Conclusions
 
 19 E2E REACT TESTING
 []19.0 Installing Cypress
