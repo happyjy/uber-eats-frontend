@@ -63,14 +63,14 @@
 [x]18.11 Conclusions
 
 19 E2E REACT TESTING
-[]19.0 Installing Cypress
-[]19.1 Our First Cypress Test
-[]19.2 Login E2E
-[]19.3 Create Account E2E part One
-[]19.4 Create Account E2E part Two
-[]19.5 Custom Commands
-[]19.6 EditProfile E2E part One
-[]19.7 EditProfile E2E part Two
+[x]19.0 Installing Cypress
+[x]19.1 Our First Cypress Test
+[x]19.2 Login E2E
+[x]19.3 Create Account E2E part One
+[x]19.4 Create Account E2E part Two
+[x]19.5 Custom Commands
+[x]19.6 EditProfile E2E part One
+[x]19.7 EditProfile E2E part Two
 
 20 OWNER DASHBOARD
 []20.0 Order Dashboard Routes

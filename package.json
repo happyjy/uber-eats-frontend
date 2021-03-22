@@ -37,6 +37,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --verbose",
     "test:coverage": "npm test -- --coverage --watchAll=false",
+    "test:e2e": "npx cypress open",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
