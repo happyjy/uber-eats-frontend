@@ -27,16 +27,13 @@ export const MyRestaurants = () => {
       <Helmet>
         <title>My Restaurants | Uber Eats</title>
       </Helmet>
-      <div className="max-w-screen-2xl mx-auto mt-32">
+      <div className="container mt-32">
         <h2 className="text-4xl font-medium mb-10">My Restaurants</h2>
         {data?.myRestaurants.ok &&
           data?.myRestaurants.restaurants.length === 0 && (
             <>
               <h4 className="text-xl mb-5">You have no restaurants.</h4>
-              <Link
-                className="text-lime-600 hover:underline"
-                to="/add-restaurant"
-              >
+              <Link className="link" to="/add-restaurant">
                 Create one &rarr;
               </Link>
             </>
