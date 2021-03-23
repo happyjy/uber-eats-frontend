@@ -22,20 +22,20 @@ export const MY_RESTAURANTS_QUERY = gql`
 export const MyRestaurants = () => {
   const { data } = useQuery<myRestaurants>(MY_RESTAURANTS_QUERY);
 
-  // const client = useApolloClient();
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     const queryResult = client.readQuery({ query: MY_RESTAURANTS_QUERY });
-  //     console.log("### queryResult", queryResult);
-  //     client.writeQuery({
-  //       query: MY_RESTAURANTS_QUERY,
-  //       data: {
-  //         ...queryResult,
-  //         restaurants: [1, 2, 3, 4],
-  //       },
-  //     });
-  //   }, 8000);
-  // }, []);
+  const client = useApolloClient();
+  useEffect(() => {
+    setTimeout(() => {
+      const queryResult = client.readQuery({ query: MY_RESTAURANTS_QUERY });
+      console.log("### queryResult", queryResult);
+      client.writeQuery({
+        query: MY_RESTAURANTS_QUERY,
+        data: {
+          ...queryResult,
+          restaurants: [1, 2, 3, 4],
+        },
+      });
+    }, 8000);
+  }, []);
 
   console.log("### Myrestaurants > data: ", data);
   return (

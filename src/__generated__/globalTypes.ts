@@ -42,6 +42,10 @@ export interface LoginInput {
   password?: string | null;
 }
 
+export interface MyRestaurantInput {
+  id: number;
+}
+
 export interface RestaurantInput {
   restaurantId: number;
 }
