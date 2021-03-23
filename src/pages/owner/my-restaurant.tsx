@@ -6,8 +6,9 @@ import {
   myRestaurant,
   myRestaurantVariables,
 } from "../../__generated__/myRestaurant";
+import { Helmet } from "react-helmet-async";
 
-const MY_RESTAURANT_QUERY = gql`
+export const MY_RESTAURANT_QUERY = gql`
   query myRestaurant($input: MyRestaurantInput!) {
     myRestaurant(input: $input) {
       ok
@@ -25,24 +26,29 @@ const MY_RESTAURANT_QUERY = gql`
 `;
 
 interface IParams {
-  id: string;
+  restaurantId: string;
 }
 
 export const MyRestaurant = () => {
-  const { id } = useParams<IParams>();
+  const { restaurantId } = useParams<IParams>();
   const { data } = useQuery<myRestaurant, myRestaurantVariables>(
     MY_RESTAURANT_QUERY,
     {
       variables: {
         input: {
-          id: +id,
+          id: +restaurantId,
         },
       },
     },
   );
-  console.log(data);
+  console.log("### my-restaurant > data: ", data);
   return (
     <div>
+      <Helmet>
+        <title>
+          {data?.myRestaurant.restaurant?.name || "Loading..."} | Nuber Eats
+        </title>
+      </Helmet>
       <div
         className="bg-gray-700 py-28 bg-center bg-cover"
         style={{
@@ -53,7 +59,10 @@ export const MyRestaurant = () => {
         <h2 className="text-4xl font-medium mb-10">
           {data?.myRestaurant.restaurant?.name || "Loading..."}
         </h2>
-        <Link to={``} className="py-3 px-10 mr-8 text-white bg-gray-800 ">
+        <Link
+          to={`/restaurants/${restaurantId}/add-dish`}
+          className=" mr-8 text-white bg-gray-800 py-3 px-10"
+        >
           ADD Dish &rarr;
         </Link>
         <Link to={``} className="py-3 px-10 text-white bg-lime-700 ">
