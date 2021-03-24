@@ -73,23 +73,23 @@
 [x]19.7 EditProfile E2E part Two
 
 20 OWNER DASHBOARD
-[]20.0 Order Dashboard Routes
-[]20.1 Create Restaurant part One
-[]20.2 File Upload part One
-[]20.3 File Upload part Two
-[]20.4 Create Restaurant part Two
-[]20.5 Cache Optimization part One
-[]20.6 Cache Optimization part Two
-[]20.7 Restaurant Dashboard part One
-[]20.8 Create Dish part One
-[]20.9 Create Dish part Two
-[]20.10 DishOptions part One
-[]20.11 DishOptions part Two
-[]20.12 Dish Component
-[]20.13 Victory Charts part One
-[]20.14 Victory Charts part Two
-[]20.15 Victory Charts part Three
-[]20.16 Conclusions
+[x]20.0 Order Dashboard Routes
+[x]20.1 Create Restaurant part One
+[x]20.2 File Upload part One
+[x]20.3 File Upload part Two
+[x]20.4 Create Restaurant part Two
+[x]20.5 Cache Optimization part One
+[x]20.6 Cache Optimization part Two
+[x]20.7 Restaurant Dashboard part One
+[x]20.8 Create Dish part One
+[x]20.9 Create Dish part Two
+[x]20.10 DishOptions part One
+[x]20.11 DishOptions part Two
+[x]20.12 Dish Component
+[x]20.13 Victory Charts part One
+[x]20.14 Victory Charts part Two
+[x]20.15 Victory Charts part Three
+[x]20.16 Conclusions
 
 21 PAYMENTS
 []21.0 Introduction
