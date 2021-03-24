@@ -1,6 +1,7 @@
 import React from "react";
 import { gql, useQuery } from "@apollo/client";
 import { Link, useParams } from "react-router-dom";
+import { VictoryAxis, VictoryBar, VictoryChart } from "victory";
 import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 import {
   myRestaurant,
@@ -83,6 +84,30 @@ export const MyRestaurant = () => {
               ))}
             </div>
           )}
+        </div>
+        <div className="mt-20 mb-10">
+          <h4 className="text-center text-2xl font-medium">Sales</h4>
+          <div className=" max-w-lg w-full mx-auto">
+            <VictoryChart domainPadding={20}>
+              <VictoryAxis
+                label="Amount of Money"
+                dependentAxis
+                tickValues={[20, 30, 40, 50, 60]}
+              />
+              <VictoryAxis
+                label="Days of Life"
+                tickValues={[20, 30, 40, 50, 60]}
+              />
+              <VictoryBar
+                data={[
+                  { x: 10, y: 20 },
+                  { x: 20, y: 5 },
+                  { x: 35, y: 55 },
+                  { x: 45, y: 99 },
+                ]}
+              />
+            </VictoryChart>
+          </div>
         </div>
       </div>
     </div>
