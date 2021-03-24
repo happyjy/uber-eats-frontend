@@ -68,17 +68,18 @@ export const AddDish = () => {
       extra: +rest[`${theId}-optionExtra`],
     }));
 
-    // createDishMutation({
-    //   variables: {
-    //     input: {
-    //       name,
-    //       price: +price,
-    //       description,
-    //       restaurantId: +restaurantId,
-    //     },
-    //   },
-    // });
-    // history.goBack();
+    createDishMutation({
+      variables: {
+        input: {
+          name,
+          price: +price,
+          description,
+          restaurantId: +restaurantId,
+          options: optionObjects,
+        },
+      },
+    });
+    history.goBack();
   };
 
   const onAddOptionClick = () => {
