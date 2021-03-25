@@ -55,16 +55,24 @@ export const Restaurant = () => {
   );
 
   const [orderStarted, setOrderStarted] = useState(false);
-  const [orderItems, setOrderItems] = useState<CreateOrderItemInput[]>();
+  const [orderItems, setOrderItems] = useState<CreateOrderItemInput[]>([]);
   const triggerStartOrder = () => {
-    setOrderStarted(true);
+    orderStarted ? setOrderStarted(false) : setOrderStarted(true);
+  };
+  const isSelected = (dishId: number) => {
+    return Boolean(orderItems?.find((order) => order.dishId === dishId));
   };
   const addItemToOrder = (dishId: number) => {
-    setOrderItems((current) => [{ dishId, ...current }]);
+    setOrderItems((current) => [{ dishId }, ...current]);
+  };
+  const removeFromOrder = (dishId: number) => {
+    setOrderItems((current) =>
+      current?.filter((dish) => dish.dishId !== dishId),
+    );
   };
 
-  console.log(orderItems);
-  console.log("### restaurant page > data: ", data);
+  console.log("### orderItems: ", orderItems);
+  console.log("### query data: ", data);
 
   return (
     <div>
@@ -90,11 +98,12 @@ export const Restaurant = () => {
 
       <div className="container pb-32  flex flex-col items-end mt-20">
         <button onClick={triggerStartOrder} className="btn px-10">
-          Start Order
+          {orderStarted ? "Ordering" : "Start Order"}
         </button>
         <div className="container grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
           {data?.restaurant.restaurant?.menu.map((dish, index) => (
             <Dish
+              isSelected={isSelected(dish.id)}
               id={dish.id}
               orderStarted={orderStarted}
               key={index}
@@ -104,6 +113,7 @@ export const Restaurant = () => {
               isCustomer={true}
               options={dish.options}
               addItemToOrder={addItemToOrder}
+              removeFromOrder={removeFromOrder}
             ></Dish>
           ))}
         </div>
