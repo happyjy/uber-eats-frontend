@@ -59,16 +59,31 @@ export const Restaurant = () => {
   const triggerStartOrder = () => {
     orderStarted ? setOrderStarted(false) : setOrderStarted(true);
   };
+  const getItem = (dishId: number) => {
+    return orderItems.find((order) => order.dishId === dishId);
+  };
   const isSelected = (dishId: number) => {
-    return Boolean(orderItems?.find((order) => order.dishId === dishId));
+    return Boolean(getItem(dishId));
   };
   const addItemToOrder = (dishId: number) => {
-    setOrderItems((current) => [{ dishId }, ...current]);
+    setOrderItems((current) => [{ dishId, options: [] }, ...current]);
   };
   const removeFromOrder = (dishId: number) => {
     setOrderItems((current) =>
       current?.filter((dish) => dish.dishId !== dishId),
     );
+  };
+  const addOptionToItem = (dishId: number, option: any) => {
+    if (!isSelected(dishId)) return;
+
+    const oldItem = getItem(dishId);
+    if (oldItem) {
+      removeFromOrder(dishId);
+      setOrderItems((current) => [
+        { dishId, options: [option, ...oldItem.options!] },
+        ...current,
+      ]);
+    }
   };
 
   console.log("### orderItems: ", orderItems);
@@ -103,17 +118,18 @@ export const Restaurant = () => {
         <div className="container grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
           {data?.restaurant.restaurant?.menu.map((dish, index) => (
             <Dish
-              isSelected={isSelected(dish.id)}
-              id={dish.id}
-              orderStarted={orderStarted}
               key={index}
-              name={dish.name}
+              id={dish.id}
               description={dish.description}
+              name={dish.name}
               price={dish.price}
               isCustomer={true}
+              isSelected={isSelected(dish.id)}
+              orderStarted={orderStarted}
               options={dish.options}
               addItemToOrder={addItemToOrder}
               removeFromOrder={removeFromOrder}
+              addOptionToItem={addOptionToItem}
             ></Dish>
           ))}
         </div>
