@@ -12,7 +12,7 @@ interface IDishProps {
   orderStarted?: boolean;
   options?: restaurantQeury_restaurant_restaurant_menu_options[] | null;
   addItemToOrder?: (dishId: number) => void;
-  removeFromOrder?: (dishId: number) => void;
+  removeItemFromOrder?: (dishId: number) => void;
 }
 
 export const Dish: React.FC<IDishProps> = ({
@@ -25,7 +25,7 @@ export const Dish: React.FC<IDishProps> = ({
   orderStarted = false,
   options,
   addItemToOrder,
-  removeFromOrder,
+  removeItemFromOrder: removeItemFromOrder,
   children: dishOptions,
 }) => {
   // console.log({ isCustomer, options });
@@ -34,8 +34,8 @@ export const Dish: React.FC<IDishProps> = ({
       if (!isSelected && addItemToOrder) {
         return addItemToOrder(id);
       }
-      if (isSelected && removeFromOrder) {
-        return removeFromOrder(id);
+      if (isSelected && removeItemFromOrder) {
+        return removeItemFromOrder(id);
       }
     }
   };
