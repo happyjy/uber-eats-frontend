@@ -49,7 +49,7 @@ const restaurantRoutes = [
 const commonRoutes = [
   { path: "/confirm", component: <ConfirmEmail /> },
   { path: "/edit-profile", component: <EditProfile /> },
-  { path: "/order/:id", component: <Order /> },
+  { path: "/orders/:id", component: <Order /> },
 ];
 export const LoggedInRouter = () => {
   const { data, loading, error } = useMe();
