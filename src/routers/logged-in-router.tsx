@@ -18,6 +18,7 @@ import { MyRestaurants } from "../pages/owner/my-restaurants";
 import { AddRestaurant } from "../pages/owner/add-restaurants";
 import { MyRestaurant } from "../pages/owner/my-restaurant";
 import { AddDish } from "../pages/client/add-dish";
+import { Order } from "../pages/order";
 
 const clientRoutes = [
   {
@@ -48,6 +49,7 @@ const restaurantRoutes = [
 const commonRoutes = [
   { path: "/confirm", component: <ConfirmEmail /> },
   { path: "/edit-profile", component: <EditProfile /> },
+  { path: "/order/:id", component: <Order /> },
 ];
 export const LoggedInRouter = () => {
   const { data, loading, error } = useMe();

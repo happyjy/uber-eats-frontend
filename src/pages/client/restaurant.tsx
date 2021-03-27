@@ -1,7 +1,7 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useHistory, useParams } from "react-router";
+import { useHistory, useParams } from "react-router-dom";
 import { Dish } from "../../components/dish";
 import { DishOption } from "../../components/dish-option";
 import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
@@ -153,6 +153,8 @@ export const Restaurant = () => {
     onCompleted,
   });
   const triggerConfirmOrder = () => {
+    // 중복 클릭 방지
+    if (placingOrder) return;
     if (orderItems.length === 0) {
       alert("Can't place empty order");
       return;
