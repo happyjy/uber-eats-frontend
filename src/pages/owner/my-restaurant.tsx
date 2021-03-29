@@ -88,7 +88,7 @@ export const MyRestaurant = () => {
     <div>
       <Helmet>
         <title>
-          {data?.myRestaurant.restaurant?.name || "Loading..."} | Nuber Eats
+          {data?.myRestaurant.restaurant?.name || "Loading..."} | Uber Eats
         </title>
       </Helmet>
       <div
