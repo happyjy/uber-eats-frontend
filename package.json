@@ -10,7 +10,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
-    "@types/google-map-react": "^2.1.0",
+    "@types/google-map-react":  "^2.1.0",
     "@types/jest": "^26.0.15",
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.3",
@@ -38,7 +38,8 @@
     "start": "npm run apollo:codegen && npm run tailwind:build && react-scripts start",
     "apollo:codegen": "rm -rf src/__generated__ && apollo client:codegen src/__generated__ --target=typescript --outputFlat",
     "tailwind:build": "tailwind build ./src/styles/tailwind.css -o ./src/styles/styles.css",
-    "build": "react-scripts build",
+     
+    "prebuild": "npm run tailwind:build",
     "test": "react-scripts test --verbose",
     "test:coverage": "npm test -- --coverage --watchAll=false",
     "test:e2e": "npx cypress open",
