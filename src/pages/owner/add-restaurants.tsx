@@ -2,14 +2,14 @@ import { gql, useApolloClient, useMutation } from "@apollo/client";
 import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
-import { useHistory } from "react-router";
 import { Button } from "../../components/button";
 import { FormError } from "../../components/form-error";
+import { MY_RESTAURANTS_QUERY } from "./my-restaurants";
 import {
   createRestaurant,
   createRestaurantVariables,
 } from "../../__generated__/createRestaurant";
-import { MY_RESTAURANTS_QUERY } from "./my-restaurants";
+import { useHistory } from "react-router-dom";
 
 const CREATE_RESTAURANT_MUTATION = gql`
   mutation createRestaurant($input: CreateRestaurantInput!) {
@@ -20,6 +20,7 @@ const CREATE_RESTAURANT_MUTATION = gql`
     }
   }
 `;
+
 interface IFormProps {
   name: string;
   address: string;
@@ -34,15 +35,12 @@ export const AddRestaurant = () => {
 
   const onCompleted = (data: createRestaurant) => {
     const {
-      createRestaurant: { ok, error, restaurantId },
+      createRestaurant: { ok, restaurantId },
     } = data;
     if (ok) {
       const { name, categoryName, address } = getValues();
-      const queryResult = client.readQuery({ query: MY_RESTAURANTS_QUERY });
-
-      console.log("### add-restaurants > queryResult: ", queryResult);
-
       setUploading(false);
+      const queryResult = client.readQuery({ query: MY_RESTAURANTS_QUERY });
       client.writeQuery({
         query: MY_RESTAURANTS_QUERY,
         data: {
@@ -69,24 +67,21 @@ export const AddRestaurant = () => {
       history.push("/");
     }
   };
-
-  const [createRestaurantMutation, { loading, data }] = useMutation<
+  const [createRestaurantMutation, { data }] = useMutation<
     createRestaurant,
     createRestaurantVariables
   >(CREATE_RESTAURANT_MUTATION, {
     onCompleted,
   });
-
   const {
     register,
     getValues,
-    formState,
-    errors,
     handleSubmit,
+    errors,
+    formState,
   } = useForm<IFormProps>({
     mode: "onChange",
   });
-
   const [uploading, setUploading] = useState(false);
   const onSubmit = async () => {
     try {
@@ -112,11 +107,9 @@ export const AddRestaurant = () => {
           },
         },
       });
-    } catch (e) {
-      console.log("### add-restaurants > onSubmit: ", e);
-    }
+    } catch (e) {}
   };
-
+  console.log("### errors: ", errors);
   return (
     <div className="container flex flex-col items-center mt-52">
       <Helmet>
@@ -132,8 +125,14 @@ export const AddRestaurant = () => {
           type="text"
           name="name"
           placeholder="Name"
-          ref={register({ required: "Name is required." })}
+          ref={register({
+            minLength: { value: 5, message: "minLength 5" },
+            required: "Name is required.",
+          })}
         />
+        {errors.name?.message && (
+          <FormError errorMessage={errors.name?.message}></FormError>
+        )}
         <input
           className="input"
           type="text"
@@ -146,7 +145,7 @@ export const AddRestaurant = () => {
           type="text"
           name="categoryName"
           placeholder="Category Name"
-          ref={register({ required: "Category is required." })}
+          ref={register({ required: "Category Name is required." })}
         />
         <div>
           <input
@@ -158,7 +157,7 @@ export const AddRestaurant = () => {
         </div>
         <Button
           loading={uploading}
-          canClick={true}
+          canClick={formState.isValid}
           actionText="Create Restaurant"
         />
         {data?.createRestaurant?.error && (
