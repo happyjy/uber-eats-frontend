@@ -62,7 +62,8 @@ export const Dish: React.FC<IDishProps> = ({
         <h4 className="font-medium">{description}</h4>
       </div>
       <span>${price}</span>
-      {isCustomer && options && options?.length !== 0 && (
+      {/* {isCustomer && options && options?.length !== 0 && ( */}
+      {options && options?.length !== 0 && (
         <div>
           <h5 className="mt-8 mb-3 font-medium">Dish Options:</h5>
           <div className="grid gap-2 justify-start">{dishOptions}</div>

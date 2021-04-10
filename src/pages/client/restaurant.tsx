@@ -218,7 +218,7 @@ export const Restaurant = () => {
         <div className="container grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
           {data?.restaurant.restaurant?.menu.map((dish, index) => (
             <Dish
-              key={index}
+              key={dish.id}
               id={dish.id}
               description={dish.description}
               name={dish.name}

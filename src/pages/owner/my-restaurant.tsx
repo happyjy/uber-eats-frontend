@@ -25,6 +25,7 @@ import {
 import { Helmet } from "react-helmet-async";
 import { Dish } from "../../components/dish";
 import { pendingOrders } from "../../__generated__/pendingOrders";
+import { DishOption } from "../../components/dish-option";
 
 export const MY_RESTAURANT_QUERY = gql`
   query myRestaurant($input: MyRestaurantInput!) {
@@ -92,7 +93,7 @@ export const MyRestaurant = () => {
         </title>
       </Helmet>
       <div
-        className="bg-gray-700 py-28 bg-center bg-cover"
+        className="py-28 bg-center bg-cover"
         style={{
           backgroundImage: `url(${data?.myRestaurant.restaurant?.coverImg})`,
         }}
@@ -114,13 +115,27 @@ export const MyRestaurant = () => {
           {data?.myRestaurant.restaurant?.menu.length === 0 ? (
             <h4> Please upload a dish!</h4>
           ) : (
-            <div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
+            <div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-5">
               {data?.myRestaurant.restaurant?.menu.map((dish) => (
                 <Dish
+                  key={dish.id}
                   name={dish.name}
                   description={dish.description}
                   price={dish.price}
-                />
+                  options={dish.options}
+                >
+                  {dish.options?.map((option, idx) => (
+                    <DishOption
+                      key={idx}
+                      dishId={dish.id}
+                      isSelected={false}
+                      name={option.name}
+                      extra={option.extra}
+                      addOptionToItem={() => {}}
+                      removeOptionFromItem={() => {}}
+                    ></DishOption>
+                  ))}
+                </Dish>
               ))}
             </div>
           )}
