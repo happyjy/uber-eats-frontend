@@ -78,6 +78,7 @@ export const MyRestaurant = () => {
   );
   const history = useHistory();
   useEffect(() => {
+    debugger;
     console.log("### subscriptionData changed: ", subscriptionData);
     if (subscriptionData?.pendingOrders.id) {
       history.push(`/orders/${subscriptionData.pendingOrders.id}`);
@@ -103,7 +104,17 @@ export const MyRestaurant = () => {
           {data?.myRestaurant.restaurant?.name || "Loading..."}
         </h2>
         <Link
-          to={`/restaurants/${restaurantId}/add-dish`}
+          to={{
+            pathname: `/restaurants/${restaurantId}/add-dish`,
+            state: {
+              type: "NEW",
+              id: 0,
+              name: "",
+              description: "",
+              price: 0,
+              options: [],
+            },
+          }}
           className=" mr-8 text-white bg-gray-800 py-3 px-10"
         >
           ADD Dish &rarr;
@@ -117,25 +128,39 @@ export const MyRestaurant = () => {
           ) : (
             <div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-5">
               {data?.myRestaurant.restaurant?.menu.map((dish) => (
-                <Dish
-                  key={dish.id}
-                  name={dish.name}
-                  description={dish.description}
-                  price={dish.price}
-                  options={dish.options}
+                <Link
+                  to={{
+                    pathname: `/restaurants/${restaurantId}/edit-dish`,
+                    state: {
+                      type: "EDIT",
+                      id: dish.id,
+                      name: dish.name,
+                      description: dish.description,
+                      price: dish.price,
+                      options: dish.options,
+                    },
+                  }}
                 >
-                  {dish.options?.map((option, idx) => (
-                    <DishOption
-                      key={idx}
-                      dishId={dish.id}
-                      isSelected={false}
-                      name={option.name}
-                      extra={option.extra}
-                      addOptionToItem={() => {}}
-                      removeOptionFromItem={() => {}}
-                    ></DishOption>
-                  ))}
-                </Dish>
+                  <Dish
+                    key={dish.id}
+                    name={dish.name}
+                    description={dish.description}
+                    price={dish.price}
+                    options={dish.options}
+                  >
+                    {dish.options?.map((option, idx) => (
+                      <DishOption
+                        key={idx}
+                        dishId={dish.id}
+                        isSelected={false}
+                        name={option.name}
+                        extra={option.extra}
+                        addOptionToItem={() => {}}
+                        removeOptionFromItem={() => {}}
+                      ></DishOption>
+                    ))}
+                  </Dish>
+                </Link>
               ))}
             </div>
           )}

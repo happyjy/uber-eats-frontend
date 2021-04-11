@@ -46,6 +46,7 @@ const restaurantRoutes = [
   { path: "/add-restaurant", component: <AddRestaurant /> },
   { path: "/restaurants/:restaurantId", component: <MyRestaurant /> },
   { path: "/restaurants/:restaurantId/add-dish", component: <AddDish /> },
+  { path: "/restaurants/:restaurantId/edit-dish", component: <AddDish /> },
 ];
 
 const commonRoutes = [

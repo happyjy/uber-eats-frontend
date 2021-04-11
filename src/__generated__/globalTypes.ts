@@ -63,9 +63,18 @@ export interface DishChoiceInputType {
 }
 
 export interface DishOptionInputType {
+  id: number;
   name: string;
   choices?: DishChoiceInputType[] | null;
   extra?: number | null;
+}
+
+export interface EditDishInput {
+  name?: string | null;
+  price?: number | null;
+  description?: string | null;
+  options?: DishOptionInputType[] | null;
+  dishId: number;
 }
 
 export interface EditOrderInput {

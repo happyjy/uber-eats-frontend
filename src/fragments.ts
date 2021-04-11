@@ -31,6 +31,7 @@ export const DISH_FRAGMENT = gql`
     photo
     description
     options {
+      id
       name
       extra
       choices {
