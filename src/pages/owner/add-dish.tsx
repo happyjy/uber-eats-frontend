@@ -167,78 +167,18 @@ export const AddDish = () => {
           },
         },
       });
-
-      /* // todo: 왜 안되는지 잘 모르겟음
-      // typescript 때문인것 같은데...
-      // delete keyword로 삭제 할 수 있는 방법은 없는걸까?
-      // dishOptionsList &&
-      //   dishOptionsList.map((dishOption) => {
-      //     delete dishOption?.__typename;
-      //     return dishOption;
-      //   });
-
-      // # 기존 option, 새로 생성한 option 합치는 과정
-
-      const newArr =
-        dishOptionsList &&
-        [...dishOptionsList].map((v) => ({
-          id: v.id,
-          name: rest[`${v.id}-optionName`],
-          extra: +rest[`${v.id}-optionExtra`],
-        }));
-      const newNewArr = newArr?.map((v) => {
-        const obj = {
-          id: v?.id,
-          name: v?.name,
-          extra: v?.extra,
-        };
-        return obj;
-      });
-
-      debugger;
-
-      if (newNewArr && newNewArr.length > 0) {
-        editOptionObjects = [...optionObjects, ...newNewArr];
-      }
-
-      editDishMutation({
-        variables: {
-          input: {
-            name,
-            price: +price,
-            description,
-            options: editOptionObjects,
-            dishId: dishId,
-          },
-        },
-      }); */
     }
     history.goBack();
   };
 
   const onAddOptionClick = () => {
-    debugger;
-    // setDishOptions({ id: Date.now(), name: "", extra: 11, choices: "" });
-    // todo: dishOoptions는 접근x, optionsNumber는 접근가능 왜?
-    // setDishOptions((current) => [
-    //   { id: Date.now(), name: "", extra: 0, choices: "" },
-    //   ...current,
-    // ]);
-    // setDishOptions((current) => [...current]);
-
     setOptionsNumberList((current) => [Date.now(), ...current]);
   };
 
   const onDeleteClick = (idToDelete: number) => {
-    debugger;
     setOptionsNumberList((current) =>
       current.filter((id) => id !== idToDelete),
     );
-
-    // debugger;
-    // setEditOptionsNumberList((current) =>
-    //   current.filter((id) => id !== idToDelete),
-    // );
 
     setValue(`${idToDelete}-optionName`, "");
     setValue(`${idToDelete}-optionExtra`, "");

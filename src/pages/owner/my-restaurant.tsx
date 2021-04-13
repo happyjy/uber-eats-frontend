@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { gql, useQuery, useSubscription } from "@apollo/client";
 import { Link, useHistory, useParams } from "react-router-dom";
 import {
@@ -62,6 +62,7 @@ interface IParams {
 }
 
 export const MyRestaurant = () => {
+  const [toggleDishOptions, setToggleDishOptions] = useState<Boolean>(false);
   const { restaurantId } = useParams<IParams>();
   const { data } = useQuery<myRestaurant, myRestaurantVariables>(
     MY_RESTAURANT_QUERY,
@@ -73,9 +74,11 @@ export const MyRestaurant = () => {
       },
     },
   );
+
   const { data: subscriptionData } = useSubscription<pendingOrders>(
     PENDING_ORDERS_SUBSCRIPTION,
   );
+
   const history = useHistory();
   useEffect(() => {
     console.log("### subscriptionData changed: ", subscriptionData);
@@ -84,6 +87,9 @@ export const MyRestaurant = () => {
     }
   }, [subscriptionData]);
 
+  const onToggleDishOptions = () => {
+    setToggleDishOptions(!toggleDishOptions);
+  };
   console.log("### my-restaurant > data: ", data);
   return (
     <div>
@@ -102,25 +108,37 @@ export const MyRestaurant = () => {
         <h2 className="text-4xl font-medium mb-10">
           {data?.myRestaurant.restaurant?.name || "Loading..."}
         </h2>
-        <Link
-          to={{
-            pathname: `/restaurants/${restaurantId}/add-dish`,
-            state: {
-              type: "NEW",
-              id: 0,
-              name: "",
-              description: "",
-              price: 0,
-              options: [],
-            },
-          }}
-          className=" mr-8 text-white bg-gray-800 py-3 px-10"
-        >
-          ADD Dish &rarr;
-        </Link>
-        <Link to={``} className="py-3 px-10 text-white bg-lime-700 ">
-          Buy Promotion &rarr;
-        </Link>
+        <div className="flex justify-between">
+          <div>
+            <Link
+              className="block mr-8 text-white bg-gray-800 py-3 px-10"
+              to={{
+                pathname: `/restaurants/${restaurantId}/add-dish`,
+                state: {
+                  type: "NEW",
+                  id: 0,
+                  name: "",
+                  description: "",
+                  price: 0,
+                  options: [],
+                },
+              }}
+            >
+              ADD Dish &rarr;
+            </Link>
+          </div>
+          <div>
+            {/* <Link to={``} className="py-3 px-10 text-white bg-lime-700 ">
+              Buy Promotion &rarr;
+            </Link> */}
+            <div
+              className="py-3 px-10 text-white bg-lime-700"
+              onClick={onToggleDishOptions}
+            >
+              toggle Dish Options
+            </div>
+          </div>
+        </div>
         <div className="mt-10">
           {data?.myRestaurant.restaurant?.menu.length === 0 ? (
             <h4> Please upload a dish!</h4>
@@ -128,6 +146,7 @@ export const MyRestaurant = () => {
             <div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-5">
               {data?.myRestaurant.restaurant?.menu.map((dish) => (
                 <Link
+                  // className="bg-yellow-200"
                   key={dish.id}
                   to={{
                     pathname: `/restaurants/${restaurantId}/edit-dish`,
@@ -147,18 +166,20 @@ export const MyRestaurant = () => {
                     description={dish.description}
                     price={dish.price}
                     options={dish.options}
+                    toggleDishOptions={!!toggleDishOptions}
                   >
-                    {dish.options?.map((option, idx) => (
-                      <DishOption
-                        key={idx}
-                        dishId={dish.id}
-                        isSelected={false}
-                        name={option.name}
-                        extra={option.extra}
-                        addOptionToItem={() => {}}
-                        removeOptionFromItem={() => {}}
-                      ></DishOption>
-                    ))}
+                    {toggleDishOptions &&
+                      dish.options?.map((option, idx) => (
+                        <DishOption
+                          key={idx}
+                          dishId={dish.id}
+                          isSelected={false}
+                          name={option.name}
+                          extra={option.extra}
+                          addOptionToItem={() => {}}
+                          removeOptionFromItem={() => {}}
+                        ></DishOption>
+                      ))}
                   </Dish>
                 </Link>
               ))}
