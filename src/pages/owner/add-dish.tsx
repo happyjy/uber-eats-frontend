@@ -68,23 +68,8 @@ export const AddDish = () => {
   const [optionsNumberList, setOptionsNumberList] = useState<number[]>(
     dishOptionsList?.map((dishOption) => dishOption.id) || [],
   );
-  // const [optionsNumberList, setOptionsNumberList] = useState<number[]>([]);
-  // const [editOptionsNumberList, setEditOptionsNumberList] = useState<number[]>(
-  //   dishOptionsList?.map((dishOption) => dishOption.id) || [],
-  // );
   const { restaurantId } = useParams<IParams>();
 
-  console.log("### state : ", {
-    dishType,
-    dishId,
-    name,
-    description,
-    price,
-    dishOptionsList,
-    rest,
-  });
-
-  debugger;
   const useFormDefaultValueDishOptions =
     dishOptionsList &&
     dishOptionsList.length &&
@@ -94,36 +79,6 @@ export const AddDish = () => {
         [`${v.id}-optionExtra`]: v.extra,
       }))
       .reduce((prev, curr) => ({ ...prev, ...curr }));
-
-  useEffect(() => {
-    if (dishOptionsList && dishOptionsList.length > 0) {
-      // debugger;
-      // todo: Array 타입을 한번에 setOptionsNumber 할수 있나?
-      // dishOptionsList.forEach((dishOption) => {
-      //   setDishOptions(() => [dishOption]);
-      // });
-      // for (let i = 0; dishOptionsList.length; i++) {
-      //   let dishOption = dishOptionsList[i];
-      //   setEditOptionsNumberList((cur) => {
-      //     debugger;
-      //     console.log(dishOption.id);
-      //     console.log(cur);
-      //     return [dishOption.id, ...cur];
-      //   });
-      //   console.log(editOptionsNumberList);
-      // }
-      // dishOptionsList.forEach((dishOption) => {
-      //   setEditOptionsNumberList((cur) => {
-      //     debugger;
-      //     console.log(dishOption.id);
-      //     console.log(cur);
-      //     return [dishOption.id, ...cur];
-      //   });
-      //   console.log(editOptionsNumberList);
-      // });
-    }
-    // console.log(editOptionsNumberList);
-  }, []);
 
   const history = useHistory();
   const [createDishMutation, { loading: createDishLoading }] = useMutation<
@@ -164,11 +119,6 @@ export const AddDish = () => {
     ],
   });
 
-  // const obj = {
-  //   optionName: "default1",
-  //   optionExtra: undefined,
-  // };
-
   const {
     register,
     handleSubmit,
@@ -182,9 +132,6 @@ export const AddDish = () => {
       price,
       description,
       ...useFormDefaultValueDishOptions,
-      // ...obj,
-      // asdf: undefined,
-      // asdfd: "1",
     },
   });
 
@@ -364,34 +311,6 @@ export const AddDish = () => {
                 </span>
               </div>
             ))}
-          {/* {dishOptionsList?.length !== 0 &&
-            dishOptionsList?.map((dishOption, idx) => (
-              <div key={dishOption.id} className="mt-5">
-                <input
-                  ref={register}
-                  name={`${dishOption.id}-optionName`}
-                  className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
-                  type="text"
-                  // value={dishOption.name}
-                  placeholder="Option Name"
-                />
-                <input
-                  ref={register}
-                  name={`${dishOption.id}-optionExtra`}
-                  className="py-2 px-4 focus:outline-none focus:border-gray-600 border-2"
-                  type="number"
-                  // value={dishOption.extra}
-                  min={0}
-                  placeholder="Option Extra"
-                />
-                <span
-                  className="cursor-pointer text-white bg-red-500 ml-3 py-3 px-4 mt-5 bg-"
-                  onClick={() => onDeleteClick(dishOption.id)}
-                >
-                  Delete Option
-                </span>
-              </div>
-            ))} */}
         </div>
         {dishType !== "EDIT" ? (
           <Button
