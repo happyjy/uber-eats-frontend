@@ -17,10 +17,10 @@ import { NotFound } from "../pages/404";
 import { MyRestaurants } from "../pages/owner/my-restaurants";
 import { AddRestaurant } from "../pages/owner/add-restaurants";
 import { MyRestaurant } from "../pages/owner/my-restaurant";
-import { AddDish } from "../pages/client/add-dish";
+import { AddDish } from "../pages/owner/add-dish";
 import { Order } from "../pages/order";
 import { UserRole } from "../__generated__/globalTypes";
-import { Dashboard } from "../pages/dirver/dashboard";
+import { Dashboard } from "../pages/driver/dashboard";
 
 const clientRoutes = [
   {

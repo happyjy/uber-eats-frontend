@@ -22,6 +22,7 @@ export interface myRestaurant_myRestaurant_restaurant_menu_options_choices {
 
 export interface myRestaurant_myRestaurant_restaurant_menu_options {
   __typename: "DishOption";
+  id: number;
   name: string;
   extra: number | null;
   choices: myRestaurant_myRestaurant_restaurant_menu_options_choices[] | null;

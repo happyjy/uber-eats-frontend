@@ -15,6 +15,7 @@ export interface DishParts_options_choices {
 
 export interface DishParts_options {
   __typename: "DishOption";
+  id: number;
   name: string;
   extra: number | null;
   choices: DishParts_options_choices[] | null;

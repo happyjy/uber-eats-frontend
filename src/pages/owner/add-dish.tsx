@@ -9,7 +9,7 @@ import {
   createDishVariables,
 } from "../../__generated__/createDish";
 import { editDish, editDishVariables } from "../../__generated__/editDish";
-import { MY_RESTAURANT_QUERY } from "../owner/my-restaurant";
+import { MY_RESTAURANT_QUERY } from "./my-restaurant";
 
 const CREATE_DISH_MUTATION = gql`
   mutation createDish($input: CreateDishInput!) {
@@ -42,7 +42,6 @@ interface IDishOption {
   id: number;
   name: string;
   extra: number;
-  choices: any;
   __typename?: string;
 }
 interface IDish {
@@ -55,13 +54,6 @@ interface IDish {
 }
 
 export const AddDish = () => {
-  const [number, setNumber] = useState(100);
-  const [dishOptions, setDishOptions] = useState<IDishOption[]>([]);
-  const [editOptionsNumberList, setEditOptionsNumberList] = useState<number[]>(
-    [],
-  );
-  const [optionsNumberList, setOptionsNumberList] = useState<number[]>([]);
-  const { restaurantId } = useParams<IParams>();
   const {
     state: {
       type: dishType,
@@ -73,6 +65,14 @@ export const AddDish = () => {
     },
     ...rest
   } = useLocation<IDish>();
+  const [optionsNumberList, setOptionsNumberList] = useState<number[]>(
+    dishOptionsList?.map((dishOption) => dishOption.id) || [],
+  );
+  // const [optionsNumberList, setOptionsNumberList] = useState<number[]>([]);
+  // const [editOptionsNumberList, setEditOptionsNumberList] = useState<number[]>(
+  //   dishOptionsList?.map((dishOption) => dishOption.id) || [],
+  // );
+  const { restaurantId } = useParams<IParams>();
 
   console.log("### state : ", {
     dishType,
@@ -84,18 +84,45 @@ export const AddDish = () => {
     rest,
   });
 
+  debugger;
+  const useFormDefaultValueDishOptions =
+    dishOptionsList &&
+    dishOptionsList.length &&
+    dishOptionsList
+      .map((v) => ({
+        [`${v.id}-optionName`]: v.name,
+        [`${v.id}-optionExtra`]: v.extra,
+      }))
+      .reduce((prev, curr) => ({ ...prev, ...curr }));
+
   useEffect(() => {
-    debugger;
     if (dishOptionsList && dishOptionsList.length > 0) {
+      // debugger;
       // todo: Array 타입을 한번에 setOptionsNumber 할수 있나?
       // dishOptionsList.forEach((dishOption) => {
       //   setDishOptions(() => [dishOption]);
       // });
-
-      dishOptionsList.forEach((dishOption) => {
-        setEditOptionsNumberList((cur) => [dishOption.id, ...cur]);
-      });
+      // for (let i = 0; dishOptionsList.length; i++) {
+      //   let dishOption = dishOptionsList[i];
+      //   setEditOptionsNumberList((cur) => {
+      //     debugger;
+      //     console.log(dishOption.id);
+      //     console.log(cur);
+      //     return [dishOption.id, ...cur];
+      //   });
+      //   console.log(editOptionsNumberList);
+      // }
+      // dishOptionsList.forEach((dishOption) => {
+      //   setEditOptionsNumberList((cur) => {
+      //     debugger;
+      //     console.log(dishOption.id);
+      //     console.log(cur);
+      //     return [dishOption.id, ...cur];
+      //   });
+      //   console.log(editOptionsNumberList);
+      // });
     }
+    // console.log(editOptionsNumberList);
   }, []);
 
   const history = useHistory();
@@ -137,6 +164,11 @@ export const AddDish = () => {
     ],
   });
 
+  // const obj = {
+  //   optionName: "default1",
+  //   optionExtra: undefined,
+  // };
+
   const {
     register,
     handleSubmit,
@@ -149,19 +181,20 @@ export const AddDish = () => {
       name,
       price,
       description,
+      ...useFormDefaultValueDishOptions,
+      // ...obj,
+      // asdf: undefined,
+      // asdfd: "1",
     },
   });
 
   const onSubmit = () => {
     const { name, price, description, ...rest } = getValues();
-    debugger;
     const optionObjects = optionsNumberList.map((theId) => ({
       id: theId,
       name: rest[`${theId}-optionName`],
       extra: +rest[`${theId}-optionExtra`],
     }));
-
-    let editOptionObjects;
 
     if (dishType !== "EDIT") {
       createDishMutation({
@@ -176,9 +209,19 @@ export const AddDish = () => {
         },
       });
     } else if (dishType === "EDIT") {
-      debugger;
+      editDishMutation({
+        variables: {
+          input: {
+            name,
+            price: +price,
+            description,
+            options: optionObjects,
+            dishId: dishId,
+          },
+        },
+      });
 
-      // todo: 왜 안되는지 잘 모르겟음
+      /* // todo: 왜 안되는지 잘 모르겟음
       // typescript 때문인것 같은데...
       // delete keyword로 삭제 할 수 있는 방법은 없는걸까?
       // dishOptionsList &&
@@ -187,13 +230,20 @@ export const AddDish = () => {
       //     return dishOption;
       //   });
 
-      const newArr = dishOptionsList && [...dishOptionsList];
+      // # 기존 option, 새로 생성한 option 합치는 과정
+
+      const newArr =
+        dishOptionsList &&
+        [...dishOptionsList].map((v) => ({
+          id: v.id,
+          name: rest[`${v.id}-optionName`],
+          extra: +rest[`${v.id}-optionExtra`],
+        }));
       const newNewArr = newArr?.map((v) => {
         const obj = {
           id: v?.id,
           name: v?.name,
           extra: v?.extra,
-          choices: v?.choices,
         };
         return obj;
       });
@@ -214,7 +264,7 @@ export const AddDish = () => {
             dishId: dishId,
           },
         },
-      });
+      }); */
     }
     history.goBack();
   };
@@ -237,6 +287,12 @@ export const AddDish = () => {
     setOptionsNumberList((current) =>
       current.filter((id) => id !== idToDelete),
     );
+
+    // debugger;
+    // setEditOptionsNumberList((current) =>
+    //   current.filter((id) => id !== idToDelete),
+    // );
+
     setValue(`${idToDelete}-optionName`, "");
     setValue(`${idToDelete}-optionExtra`, "");
   };
@@ -308,7 +364,7 @@ export const AddDish = () => {
                 </span>
               </div>
             ))}
-          {dishOptionsList?.length !== 0 &&
+          {/* {dishOptionsList?.length !== 0 &&
             dishOptionsList?.map((dishOption, idx) => (
               <div key={dishOption.id} className="mt-5">
                 <input
@@ -316,7 +372,7 @@ export const AddDish = () => {
                   name={`${dishOption.id}-optionName`}
                   className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
                   type="text"
-                  value={dishOption.name}
+                  // value={dishOption.name}
                   placeholder="Option Name"
                 />
                 <input
@@ -324,18 +380,18 @@ export const AddDish = () => {
                   name={`${dishOption.id}-optionExtra`}
                   className="py-2 px-4 focus:outline-none focus:border-gray-600 border-2"
                   type="number"
-                  value={dishOption.extra}
+                  // value={dishOption.extra}
                   min={0}
                   placeholder="Option Extra"
                 />
                 <span
                   className="cursor-pointer text-white bg-red-500 ml-3 py-3 px-4 mt-5 bg-"
-                  onClick={() => onDeleteClick(idx)}
+                  onClick={() => onDeleteClick(dishOption.id)}
                 >
                   Delete Option
                 </span>
               </div>
-            ))}
+            ))} */}
         </div>
         {dishType !== "EDIT" ? (
           <Button

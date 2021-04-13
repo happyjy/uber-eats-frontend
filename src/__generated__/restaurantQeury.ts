@@ -22,6 +22,7 @@ export interface restaurantQeury_restaurant_restaurant_menu_options_choices {
 
 export interface restaurantQeury_restaurant_restaurant_menu_options {
   __typename: "DishOption";
+  id: number;
   name: string;
   extra: number | null;
   choices: restaurantQeury_restaurant_restaurant_menu_options_choices[] | null;

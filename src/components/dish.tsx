@@ -25,7 +25,7 @@ export const Dish: React.FC<IDishProps> = ({
   orderStarted = false,
   options,
   addItemToOrder,
-  removeItemFromOrder: removeItemFromOrder,
+  removeItemFromOrder,
   children: dishOptions,
 }) => {
   // console.log({ isCustomer, options });

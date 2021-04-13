@@ -78,7 +78,6 @@ export const MyRestaurant = () => {
   );
   const history = useHistory();
   useEffect(() => {
-    debugger;
     console.log("### subscriptionData changed: ", subscriptionData);
     if (subscriptionData?.pendingOrders.id) {
       history.push(`/orders/${subscriptionData.pendingOrders.id}`);
@@ -129,6 +128,7 @@ export const MyRestaurant = () => {
             <div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-5">
               {data?.myRestaurant.restaurant?.menu.map((dish) => (
                 <Link
+                  key={dish.id}
                   to={{
                     pathname: `/restaurants/${restaurantId}/edit-dish`,
                     state: {
