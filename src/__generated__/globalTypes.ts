@@ -78,6 +78,7 @@ export interface EditDishInput {
   price?: number | null;
   description?: string | null;
   options?: DishOptionInputType[] | null;
+  hidden?: boolean | null;
   dishId: number;
 }
 

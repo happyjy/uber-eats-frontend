@@ -20,7 +20,7 @@ const CREATE_DISH_MUTATION = gql`
   }
 `;
 
-const EDIT_DISH_MUTATION = gql`
+export const EDIT_DISH_MUTATION = gql`
   mutation editDish($input: EditDishInput!) {
     editDish(input: $input) {
       ok

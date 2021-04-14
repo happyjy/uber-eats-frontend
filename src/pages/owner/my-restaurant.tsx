@@ -31,6 +31,8 @@ import {
   deleteDishVariables,
 } from "../../__generated__/deleteDish";
 import { CreateOrderItemInput } from "../../__generated__/globalTypes";
+import { editDish, editDishVariables } from "../../__generated__/editDish";
+import { EDIT_DISH_MUTATION } from "./add-dish";
 
 export const MY_RESTAURANT_QUERY = gql`
   query myRestaurant($input: MyRestaurantInput!) {
@@ -70,6 +72,15 @@ const DELETE_DISH_MUTATION = gql`
     }
   }
 `;
+
+// const EDIT_DISH_MUTATION = gql`
+//   mutation editDish($input: EditDishInput!) {
+//     editDish(input: $input) {
+//       ok
+//       error
+//     }
+//   }
+// `;
 
 interface IParams {
   restaurantId: string;
@@ -119,6 +130,7 @@ export const MyRestaurant = () => {
     deleteDishVariables
   >(DELETE_DISH_MUTATION, {
     onCompleted: (v) => {
+      onCancle();
       console.log(`### onCompleted: ${v}`);
     },
     onError: (error) => {
@@ -136,6 +148,32 @@ export const MyRestaurant = () => {
     ],
   });
 
+  const [editDishMutation, { loading: editDishLoading }] = useMutation<
+    editDish,
+    editDishVariables
+  >(EDIT_DISH_MUTATION, {
+    onCompleted: (d) => {
+      console.log("### d: ", d);
+      onCancle();
+    },
+    onError: (e) => {
+      console.log("### e: ", e);
+    },
+    refetchQueries: [
+      {
+        query: MY_RESTAURANT_QUERY,
+        variables: {
+          input: {
+            id: +restaurantId,
+          },
+        },
+      },
+    ],
+  });
+
+  /**
+   * life cycle
+   */
   useEffect(() => {
     console.log("### subscriptionData changed: ", subscriptionData);
     if (subscriptionData?.pendingOrders.id) {
@@ -162,13 +200,14 @@ export const MyRestaurant = () => {
     }
     clickedDishNumberList &&
       clickedDishNumberList.forEach((dishNumber) => {
-        // deletedishMutation({
-        //   variables: {
-        //     input: {
-        //       dishId: dishNumber.dishId,
-        //     },
-        //   },
-        // });
+        editDishMutation({
+          variables: {
+            input: {
+              dishId: dishNumber.dishId,
+              hidden: true,
+            },
+          },
+        });
       });
   };
 
@@ -213,6 +252,7 @@ export const MyRestaurant = () => {
 
   // etc
   const onCancle = () => {
+    debugger;
     setToggleAllButton(true);
     setToggleDeleteDishButton(false);
     setToggleHideDishButton(false);
