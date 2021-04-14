@@ -14,6 +14,9 @@ interface IDishProps {
   addItemToOrder?: (dishId: number) => void;
   removeItemFromOrder?: (dishId: number) => void;
   toggleDishOptions?: boolean;
+  toggleDeleteDish?: boolean;
+  addDeleteDishList?: (dishId: number) => void;
+  removeDeleteDishList?: (dishId: number) => void;
 }
 
 export const Dish: React.FC<IDishProps> = ({
@@ -28,10 +31,28 @@ export const Dish: React.FC<IDishProps> = ({
   addItemToOrder,
   removeItemFromOrder,
   toggleDishOptions = false,
+  toggleDeleteDish = false,
+  addDeleteDishList,
+  removeDeleteDishList,
   children: dishOptions,
 }) => {
   // console.log({ isCustomer, options });
-  const onClick = () => {
+  const onClickContainer = () => {
+    if (toggleDeleteDish) {
+      console.log("### toggleDeleteDish: ", toggleDeleteDish);
+      console.log("### isSelected: ", isSelected);
+      console.log("### removeDeleteDishList: ", removeDeleteDishList);
+      console.log("### addDeleteDishList: ", addDeleteDishList);
+      console.log("### id: ", id);
+      if (isSelected && removeDeleteDishList) {
+        return removeDeleteDishList(id);
+      }
+      if (!isSelected && addDeleteDishList) {
+        return addDeleteDishList(id);
+      }
+    }
+  };
+  const onClickButton = () => {
     if (orderStarted) {
       if (!isSelected && addItemToOrder) {
         return addItemToOrder(id);
@@ -46,6 +67,7 @@ export const Dish: React.FC<IDishProps> = ({
       className={`h-full px-8 py-4 border cursor-pointer transition-all ${
         isSelected ? "border-gray-800" : " hover:border-gray-800"
       }`}
+      onClick={onClickContainer}
     >
       <div className="mb-5">
         <h3 className="flex items-center text-lg font-medium">
@@ -55,7 +77,7 @@ export const Dish: React.FC<IDishProps> = ({
               className={`ml-3 py-1 px-3 focus:outline-none text-sm  text-white ${
                 isSelected ? "bg-red-500" : " bg-lime-600"
               }`}
-              onClick={onClick}
+              onClick={onClickButton}
             >
               {isSelected ? "Remove" : "Add"}
             </button>
