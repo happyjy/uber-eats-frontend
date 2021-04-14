@@ -14,9 +14,11 @@ interface IDishProps {
   addItemToOrder?: (dishId: number) => void;
   removeItemFromOrder?: (dishId: number) => void;
   toggleDishOptions?: boolean;
-  toggleDeleteDish?: boolean;
-  addDeleteDishList?: (dishId: number) => void;
-  removeDeleteDishList?: (dishId: number) => void;
+  clickMode?: boolean;
+  // toggleDeleteDish?: boolean;
+  // toggleHideDish?: boolean;
+  addDishList?: (dishId: number) => void;
+  removeDishList?: (dishId: number) => void;
 }
 
 export const Dish: React.FC<IDishProps> = ({
@@ -31,24 +33,27 @@ export const Dish: React.FC<IDishProps> = ({
   addItemToOrder,
   removeItemFromOrder,
   toggleDishOptions = false,
-  toggleDeleteDish = false,
-  addDeleteDishList,
-  removeDeleteDishList,
+  clickMode = false,
+  // toggleDeleteDish = false,
+  // toggleHideDish = false,
+  addDishList,
+  removeDishList,
   children: dishOptions,
 }) => {
   // console.log({ isCustomer, options });
   const onClickContainer = () => {
-    if (toggleDeleteDish) {
-      console.log("### toggleDeleteDish: ", toggleDeleteDish);
+    if (clickMode) {
+      console.log("### clickMode: ", clickMode);
+      // console.log("### toggleDeleteDish: ", toggleDeleteDish);
       console.log("### isSelected: ", isSelected);
-      console.log("### removeDeleteDishList: ", removeDeleteDishList);
-      console.log("### addDeleteDishList: ", addDeleteDishList);
-      console.log("### id: ", id);
-      if (isSelected && removeDeleteDishList) {
-        return removeDeleteDishList(id);
+      // console.log("### addDishList: ", addDishList);
+      // console.log("### removeDishList: ", removeDishList);
+      // console.log("### id: ", id);
+      if (isSelected && removeDishList) {
+        return removeDishList(id);
       }
-      if (!isSelected && addDeleteDishList) {
-        return addDeleteDishList(id);
+      if (!isSelected && addDishList) {
+        return addDishList(id);
       }
     }
   };

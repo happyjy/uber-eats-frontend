@@ -62,10 +62,6 @@ const PENDING_ORDERS_SUBSCRIPTION = gql`
   ${FULL_ORDER_FRAGMENT}
 `;
 
-interface IParams {
-  restaurantId: string;
-}
-
 const DELETE_DISH_MUTATION = gql`
   mutation deleteDish($input: DeleteDishInput!) {
     deleteDish(input: $input) {
@@ -75,16 +71,38 @@ const DELETE_DISH_MUTATION = gql`
   }
 `;
 
+interface IParams {
+  restaurantId: string;
+}
+
 export const MyRestaurant = () => {
-  const [deleteDishNumberList, setDeleteDishNumberList] = useState<
+  const [clickedDishNumberList, setClickedDishNumberList] = useState<
     CreateOrderItemInput[]
   >([]);
-  const [toggleDeleteDish, setToggleDeleteDish] = useState<Boolean>(false);
-  // const [deleteDishList, setDeleteDishList] = useState<number[]>([]);
-  const [toggleDishOptions, setToggleDishOptions] = useState<Boolean>(false);
-  const [stopNavigating, setStopNavigating] = useState<Boolean>(false);
+  const [dishBoxClickMode, setDishboxClickMode] = useState<Boolean>(false);
+  const [toggleAllButton, setToggleAllButton] = useState<Boolean>(true);
 
+  const [toggleDeleteDishButton, setToggleDeleteDishButton] = useState<Boolean>(
+    false,
+  );
+  const [toggleHideDishButton, setToggleHideDishButton] = useState<Boolean>(
+    false,
+  );
+  // const [toggleDeleteDish, setToggleDeleteDish] = useState<Boolean>(false);
+  // const [toggleHideDish, setToggleHideDish] = useState<Boolean>(false);
+
+  const [stopNavigating, setStopNavigating] = useState<Boolean>(false);
+  const [toggleDishOptions, setToggleDishOptions] = useState<Boolean>(false);
   const { restaurantId } = useParams<IParams>();
+  const history = useHistory();
+
+  /**
+   * apollo/client
+   */
+  const { data: subscriptionData } = useSubscription<pendingOrders>(
+    PENDING_ORDERS_SUBSCRIPTION,
+  );
+
   const { data } = useQuery<myRestaurant, myRestaurantVariables>(
     MY_RESTAURANT_QUERY,
     {
@@ -94,10 +112,6 @@ export const MyRestaurant = () => {
         },
       },
     },
-  );
-
-  const { data: subscriptionData } = useSubscription<pendingOrders>(
-    PENDING_ORDERS_SUBSCRIPTION,
   );
 
   const [deletedishMutation, { loading }] = useMutation<
@@ -122,7 +136,6 @@ export const MyRestaurant = () => {
     ],
   });
 
-  const history = useHistory();
   useEffect(() => {
     console.log("### subscriptionData changed: ", subscriptionData);
     if (subscriptionData?.pendingOrders.id) {
@@ -130,38 +143,50 @@ export const MyRestaurant = () => {
     }
   }, [subscriptionData]);
 
-  const addDeleteDishList = (dishId: number) => {
-    setDeleteDishNumberList((current) => [{ dishId, options: [] }, ...current]);
-  };
-  const removeDeleteDishList = (dishId: number) => {
-    setDeleteDishNumberList((current) =>
-      current?.filter((dish) => dish.dishId !== dishId),
-    );
-  };
-  const getItem = (dishId: number) => {
-    return deleteDishNumberList.find((order) => order.dishId === dishId);
-  };
-  const isSelected = (dishId: number) => {
-    console.log(dishId);
-    console.log(getItem(dishId));
-    return Boolean(getItem(dishId));
+  /**
+   * Event
+   */
+  // hide dish
+  const onToggleHideDish = () => {
+    setToggleAllButton(false);
+    setToggleHideDishButton(true);
+    setDishboxClickMode(true);
+    setStopNavigating(true);
   };
 
-  const onToggleDeleteDish = () => {
-    setToggleDeleteDish(!toggleDeleteDish);
-    setStopNavigating(!stopNavigating);
+  const onHideDish = () => {
+    // setToggleHideDishButton(!toggleDeleteDish);
+    if (clickedDishNumberList.length === 0) {
+      alert("click dish to hide");
+      return;
+    }
+    clickedDishNumberList &&
+      clickedDishNumberList.forEach((dishNumber) => {
+        // deletedishMutation({
+        //   variables: {
+        //     input: {
+        //       dishId: dishNumber.dishId,
+        //     },
+        //   },
+        // });
+      });
   };
 
+  // delete dish
+  const addDishList = (dishId: number) => {
+    setClickedDishNumberList((current) => [
+      { dishId, options: [] },
+      ...current,
+    ]);
+  };
   const onDeleteDish = () => {
-    // setToggleDeleteDish(!toggleDeleteDish);
-    if (deleteDishNumberList.length === 0) {
+    // setToggleDeleteDishButton(!toggleDeleteDish);
+    if (clickedDishNumberList.length === 0) {
       alert("click dish to delete");
       return;
     }
-
-    console.log(deleteDishNumberList);
-    deleteDishNumberList &&
-      deleteDishNumberList.forEach((dishNumber) => {
+    clickedDishNumberList &&
+      clickedDishNumberList.forEach((dishNumber) => {
         deletedishMutation({
           variables: {
             input: {
@@ -172,14 +197,39 @@ export const MyRestaurant = () => {
       });
   };
 
-  const onCancleDeleteDish = () => {
-    setToggleDeleteDish(false);
-    setDeleteDishNumberList([]);
+  // dish component click event
+  const removeDishList = (dishId: number) => {
+    setClickedDishNumberList((current) =>
+      current?.filter((dish) => dish.dishId !== dishId),
+    );
+    console.log(clickedDishNumberList);
+  };
+  const getItem = (dishId: number) => {
+    return clickedDishNumberList.find((order) => order.dishId === dishId);
+  };
+  const isSelected = (dishId: number) => {
+    return Boolean(getItem(dishId));
+  };
+
+  // etc
+  const onCancle = () => {
+    setToggleAllButton(true);
+    setToggleDeleteDishButton(false);
+    setToggleHideDishButton(false);
+    setStopNavigating(false);
+    setClickedDishNumberList([]);
+  };
+  const onToggleDeleteDish = () => {
+    setToggleAllButton(false);
+    setToggleDeleteDishButton(true);
+    setDishboxClickMode(true);
+    setStopNavigating(true);
   };
 
   const onToggleDishOptions = () => {
     setToggleDishOptions(!toggleDishOptions);
   };
+
   console.log("### my-restaurant > data: ", data);
   return (
     <div>
@@ -200,29 +250,39 @@ export const MyRestaurant = () => {
         </h2>
         <div className="flex justify-between">
           <div>
-            <Link
-              className="block mr-8 text-white bg-gray-800 py-3 px-10"
-              to={{
-                pathname: `/restaurants/${restaurantId}/add-dish`,
-                state: {
-                  type: "NEW",
-                  id: 0,
-                  name: "",
-                  description: "",
-                  price: 0,
-                  options: [],
-                },
-              }}
-            >
-              ADD Dish &rarr;
-            </Link>
+            {toggleAllButton && (
+              <Link
+                className="block mr-8 text-white bg-gray-800 py-3 px-10"
+                to={{
+                  pathname: `/restaurants/${restaurantId}/add-dish`,
+                  state: {
+                    type: "NEW",
+                    id: 0,
+                    name: "",
+                    description: "",
+                    price: 0,
+                    options: [],
+                  },
+                }}
+              >
+                ADD Dish &rarr;
+              </Link>
+            )}
           </div>
           <div>
             {/* <Link to={``} className="py-3 px-10 text-white bg-lime-700 ">
               Buy Promotion &rarr;
             </Link> */}
-            {!toggleDeleteDish && (
+            {/* To prevent Navigating when click dish box dom */}
+            <Prompt when={!!stopNavigating} message={(location) => false} />
+            {toggleAllButton && (
               <>
+                <label
+                  className="inline-block mr-8 py-3 px-10 text-white bg-lime-700 cursor-pointer"
+                  onClick={onToggleHideDish}
+                >
+                  start hide Dish
+                </label>
                 <label
                   className="inline-block mr-8 py-3 px-10 text-white bg-lime-700 cursor-pointer"
                   onClick={onToggleDeleteDish}
@@ -237,8 +297,17 @@ export const MyRestaurant = () => {
                 </label>
               </>
             )}
-
-            {toggleDeleteDish && (
+            {!toggleAllButton && toggleHideDishButton && (
+              <>
+                <label
+                  className="inline-block mr-8 py-3 px-10 text-white bg-lime-700 cursor-pointer"
+                  onClick={onHideDish}
+                >
+                  hide Dish
+                </label>
+              </>
+            )}
+            {!toggleAllButton && toggleDeleteDishButton && (
               <>
                 <label
                   className="inline-block mr-8 py-3 px-10 text-white bg-lime-700 cursor-pointer"
@@ -246,17 +315,18 @@ export const MyRestaurant = () => {
                 >
                   delete Dish
                 </label>
-                <label
-                  className="inline-block py-3 px-10 text-white bg-black hover:bg-black cursor-pointer"
-                  onClick={onCancleDeleteDish}
-                >
-                  cancle Dish
-                </label>
               </>
+            )}
+            {!toggleAllButton && (
+              <label
+                className="inline-block py-3 px-10 text-white bg-black hover:bg-black cursor-pointer"
+                onClick={onCancle}
+              >
+                cancle
+              </label>
             )}
           </div>
         </div>
-        <Prompt when={!!stopNavigating} message={(location) => false} />
         <div className="mt-10">
           {data?.myRestaurant.restaurant?.menu.length === 0 ? (
             <h4> Please upload a dish!</h4>
@@ -287,9 +357,9 @@ export const MyRestaurant = () => {
                     options={dish.options}
                     isSelected={isSelected(dish.id)}
                     toggleDishOptions={!!toggleDishOptions}
-                    toggleDeleteDish={!!toggleDeleteDish}
-                    addDeleteDishList={addDeleteDishList}
-                    removeDeleteDishList={removeDeleteDishList}
+                    clickMode={!!dishBoxClickMode}
+                    addDishList={addDishList}
+                    removeDishList={removeDishList}
                   >
                     {toggleDishOptions &&
                       dish.options?.map((option, idx) => (
