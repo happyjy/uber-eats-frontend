@@ -30,6 +30,8 @@ export const DISH_FRAGMENT = gql`
     price
     photo
     description
+    hidden
+    order
     options {
       id
       name

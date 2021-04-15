@@ -229,6 +229,7 @@ export const Restaurant = () => {
               options={dish.options}
               addItemToOrder={addItemToOrder}
               removeItemFromOrder={removeItemFromOrder}
+              hiddenType={dish.hidden}
             >
               {dish.options?.map((option, idx) => (
                 <DishOption

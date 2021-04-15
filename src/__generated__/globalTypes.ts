@@ -7,12 +7,23 @@
 // START Enums and Input Objects
 //==============================================================
 
+export enum HiddenType {
+  ALL = "ALL",
+  FALSE = "FALSE",
+  TRUE = "TRUE",
+}
+
 export enum OrderStatus {
   Cooked = "Cooked",
   Cooking = "Cooking",
   Delivered = "Delivered",
   Pending = "Pending",
   PickedUp = "PickedUp",
+}
+
+export enum OrderType {
+  ASC = "ASC",
+  DESC = "DESC",
 }
 
 export enum UserRole {
@@ -104,6 +115,8 @@ export interface LoginInput {
 
 export interface MyRestaurantInput {
   id: number;
+  hiddenType?: HiddenType | null;
+  orderType?: OrderType | null;
 }
 
 export interface OrderItemOptionInputType {

@@ -28,5 +28,7 @@ export interface DishParts {
   price: number;
   photo: string | null;
   description: string;
+  hidden: boolean;
+  order: number | null;
   options: DishParts_options[] | null;
 }

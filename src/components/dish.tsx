@@ -1,4 +1,5 @@
 import React from "react";
+import { HiddenType } from "../__generated__/globalTypes";
 import { restaurantQeury_restaurant_restaurant_menu_options } from "../__generated__/restaurantQeury";
 
 // # owner, client
@@ -15,10 +16,9 @@ interface IDishProps {
   removeItemFromOrder?: (dishId: number) => void;
   toggleDishOptions?: boolean;
   clickMode?: boolean;
-  // toggleDeleteDish?: boolean;
-  // toggleHideDish?: boolean;
   addDishList?: (dishId: number) => void;
   removeDishList?: (dishId: number) => void;
+  hiddenType: boolean;
 }
 
 export const Dish: React.FC<IDishProps> = ({
@@ -34,21 +34,13 @@ export const Dish: React.FC<IDishProps> = ({
   removeItemFromOrder,
   toggleDishOptions = false,
   clickMode = false,
-  // toggleDeleteDish = false,
-  // toggleHideDish = false,
   addDishList,
   removeDishList,
+  hiddenType,
   children: dishOptions,
 }) => {
-  // console.log({ isCustomer, options });
   const onClickContainer = () => {
     if (clickMode) {
-      console.log("### clickMode: ", clickMode);
-      // console.log("### toggleDeleteDish: ", toggleDeleteDish);
-      console.log("### isSelected: ", isSelected);
-      // console.log("### addDishList: ", addDishList);
-      // console.log("### removeDishList: ", removeDishList);
-      // console.log("### id: ", id);
       if (isSelected && removeDishList) {
         return removeDishList(id);
       }
@@ -69,9 +61,9 @@ export const Dish: React.FC<IDishProps> = ({
   };
   return (
     <div
-      className={`h-full px-8 py-4 border cursor-pointer transition-all ${
-        isSelected ? "border-gray-800" : " hover:border-gray-800"
-      }`}
+      className={`h-full px-8 py-4 border
+      ${!hiddenType ? "transition-all cursor-pointer" : "bg-gray-200"}
+      ${isSelected ? "border-gray-800" : "hover:border-gray-800"} `}
       onClick={onClickContainer}
     >
       <div className="mb-5">

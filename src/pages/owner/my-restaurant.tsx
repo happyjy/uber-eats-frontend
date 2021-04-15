@@ -18,21 +18,31 @@ import {
   ORDERS_FRAGMENT,
   FULL_ORDER_FRAGMENT,
 } from "../../fragments";
-import {
-  myRestaurant,
-  myRestaurantVariables,
-} from "../../__generated__/myRestaurant";
+
 import { Helmet } from "react-helmet-async";
 import { Dish } from "../../components/dish";
 import { pendingOrders } from "../../__generated__/pendingOrders";
 import { DishOption } from "../../components/dish-option";
+
+import {
+  CreateOrderItemInput,
+  HiddenType,
+  OrderType,
+} from "../../__generated__/globalTypes";
+import { editDish, editDishVariables } from "../../__generated__/editDish";
+import { EDIT_DISH_MUTATION } from "./add-dish";
+import {
+  myRestaurant,
+  myRestaurantVariables,
+} from "../../__generated__/myRestaurant";
 import {
   deleteDish,
   deleteDishVariables,
 } from "../../__generated__/deleteDish";
-import { CreateOrderItemInput } from "../../__generated__/globalTypes";
-import { editDish, editDishVariables } from "../../__generated__/editDish";
-import { EDIT_DISH_MUTATION } from "./add-dish";
+
+interface IParams {
+  restaurantId: string;
+}
 
 export const MY_RESTAURANT_QUERY = gql`
   query myRestaurant($input: MyRestaurantInput!) {
@@ -82,11 +92,10 @@ const DELETE_DISH_MUTATION = gql`
 //   }
 // `;
 
-interface IParams {
-  restaurantId: string;
-}
-
 export const MyRestaurant = () => {
+  const [hiddenType, setHiddenType] = useState<HiddenType>(HiddenType.FALSE);
+  const [orderType, setorderType] = useState<OrderType>(OrderType.DESC);
+
   const [clickedDishNumberList, setClickedDishNumberList] = useState<
     CreateOrderItemInput[]
   >([]);
@@ -114,16 +123,19 @@ export const MyRestaurant = () => {
     PENDING_ORDERS_SUBSCRIPTION,
   );
 
-  const { data } = useQuery<myRestaurant, myRestaurantVariables>(
-    MY_RESTAURANT_QUERY,
-    {
-      variables: {
-        input: {
-          id: +restaurantId,
-        },
+  const { data: myRestaurantData } = useQuery<
+    myRestaurant,
+    myRestaurantVariables
+  >(MY_RESTAURANT_QUERY, {
+    variables: {
+      input: {
+        id: +restaurantId,
+        hiddenType: hiddenType,
+        orderType: orderType,
       },
     },
-  );
+    fetchPolicy: "cache-and-network",
+  });
 
   const [deletedishMutation, { loading }] = useMutation<
     deleteDish,
@@ -192,26 +204,41 @@ export const MyRestaurant = () => {
     setStopNavigating(true);
   };
 
-  const onHideDish = () => {
+  const onToggleHiddenDish = () => {
     // setToggleHideDishButton(!toggleDeleteDish);
     if (clickedDishNumberList.length === 0) {
       alert("click dish to hide");
       return;
     }
+    type option = {
+      [key: string]: boolean | undefined;
+    };
+
+    const result:
+      | option
+      | undefined = myRestaurantData?.myRestaurant.restaurant?.menu.reduce(
+      (prev, curr) => {
+        return { ...prev, [curr.id]: curr.hidden };
+      },
+      {},
+    );
+
     clickedDishNumberList &&
       clickedDishNumberList.forEach((dishNumber) => {
+        const hidden = result && result[dishNumber.dishId];
         editDishMutation({
           variables: {
             input: {
               dishId: dishNumber.dishId,
-              hidden: true,
+              hidden: !hidden,
+              // hidden: !result[dishNumber.dishId],
             },
           },
         });
       });
   };
 
-  // delete dish
+  // create array of hidden & delete dish number list
   const addDishList = (dishId: number) => {
     setClickedDishNumberList((current) => [
       { dishId, options: [] },
@@ -241,7 +268,6 @@ export const MyRestaurant = () => {
     setClickedDishNumberList((current) =>
       current?.filter((dish) => dish.dishId !== dishId),
     );
-    console.log(clickedDishNumberList);
   };
   const getItem = (dishId: number) => {
     return clickedDishNumberList.find((order) => order.dishId === dishId);
@@ -252,7 +278,6 @@ export const MyRestaurant = () => {
 
   // etc
   const onCancle = () => {
-    debugger;
     setToggleAllButton(true);
     setToggleDeleteDishButton(false);
     setToggleHideDishButton(false);
@@ -270,24 +295,46 @@ export const MyRestaurant = () => {
     setToggleDishOptions(!toggleDishOptions);
   };
 
-  console.log("### my-restaurant > data: ", data);
+  const onChangeSelect = (e: any) => {
+    let option;
+    switch (e.target.value) {
+      case HiddenType.FALSE:
+        option = HiddenType.FALSE;
+        break;
+      case HiddenType.TRUE:
+        option = HiddenType.TRUE;
+        break;
+      case HiddenType.ALL:
+        option = HiddenType.ALL;
+        break;
+      default:
+        option = HiddenType.FALSE;
+        break;
+    }
+    setHiddenType(option);
+  };
+
+  console.log("### my-restaurant > data: ", myRestaurantData);
+  console.log(myRestaurantData?.myRestaurant.restaurant?.menu);
   return (
     <div>
       <Helmet>
         <title>
-          {data?.myRestaurant.restaurant?.name || "Loading..."} | Uber Eats
+          {myRestaurantData?.myRestaurant.restaurant?.name || "Loading..."} |
+          Uber Eats
         </title>
       </Helmet>
       <div
         className="py-28 bg-center bg-cover"
         style={{
-          backgroundImage: `url(${data?.myRestaurant.restaurant?.coverImg})`,
+          backgroundImage: `url(${myRestaurantData?.myRestaurant.restaurant?.coverImg})`,
         }}
       ></div>
       <div className="container mt-10">
         <h2 className="text-4xl font-medium mb-10">
-          {data?.myRestaurant.restaurant?.name || "Loading..."}
+          {myRestaurantData?.myRestaurant.restaurant?.name || "Loading..."}
         </h2>
+        {/* button */}
         <div className="flex justify-between">
           <div>
             {toggleAllButton && (
@@ -321,7 +368,7 @@ export const MyRestaurant = () => {
                   className="inline-block mr-8 py-3 px-10 text-white bg-lime-700 cursor-pointer"
                   onClick={onToggleHideDish}
                 >
-                  start hide Dish
+                  start toggle Dish
                 </label>
                 <label
                   className="inline-block mr-8 py-3 px-10 text-white bg-lime-700 cursor-pointer"
@@ -341,9 +388,9 @@ export const MyRestaurant = () => {
               <>
                 <label
                   className="inline-block mr-8 py-3 px-10 text-white bg-lime-700 cursor-pointer"
-                  onClick={onHideDish}
+                  onClick={onToggleHiddenDish}
                 >
-                  hide Dish
+                  toggle Dish
                 </label>
               </>
             )}
@@ -367,58 +414,75 @@ export const MyRestaurant = () => {
             )}
           </div>
         </div>
+
+        {/* dish list */}
         <div className="mt-10">
-          {data?.myRestaurant.restaurant?.menu.length === 0 ? (
+          {myRestaurantData?.myRestaurant.restaurant?.menu.length === 0 ? (
             <h4> Please upload a dish!</h4>
           ) : (
-            <div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-5">
-              {data?.myRestaurant.restaurant?.menu.map((dish) => (
-                <Link
-                  // className="bg-yellow-200"
-                  key={dish.id}
-                  to={{
-                    pathname: `/restaurants/${restaurantId}/edit-dish`,
-                    state: {
-                      type: "EDIT",
-                      id: dish.id,
-                      name: dish.name,
-                      description: dish.description,
-                      price: dish.price,
-                      options: dish.options,
-                    },
-                  }}
+            <>
+              <div className="mt-16 flex justify-end">
+                <select
+                  className="input"
+                  value={hiddenType}
+                  onChange={onChangeSelect}
                 >
-                  <Dish
+                  <option value={HiddenType.FALSE}>available dish</option>
+                  <option value={HiddenType.TRUE}>hidden dish</option>
+                  <option value={HiddenType.ALL}>all dish</option>
+                </select>
+              </div>
+              <div className="grid mt-5 md:grid-cols-3 gap-x-5 gap-y-5">
+                {myRestaurantData?.myRestaurant.restaurant?.menu.map((dish) => (
+                  <Link
+                    // className="bg-yellow-200"
                     key={dish.id}
-                    id={dish.id}
-                    name={dish.name}
-                    description={dish.description}
-                    price={dish.price}
-                    options={dish.options}
-                    isSelected={isSelected(dish.id)}
-                    toggleDishOptions={!!toggleDishOptions}
-                    clickMode={!!dishBoxClickMode}
-                    addDishList={addDishList}
-                    removeDishList={removeDishList}
+                    to={{
+                      pathname: `/restaurants/${restaurantId}/edit-dish`,
+                      state: {
+                        type: "EDIT",
+                        id: dish.id,
+                        name: dish.name,
+                        description: dish.description,
+                        price: dish.price,
+                        options: dish.options,
+                      },
+                    }}
                   >
-                    {toggleDishOptions &&
-                      dish.options?.map((option, idx) => (
-                        <DishOption
-                          key={idx}
-                          dishId={dish.id}
-                          isSelected={false}
-                          name={option.name}
-                          extra={option.extra}
-                          addOptionToItem={() => {}}
-                          removeOptionFromItem={() => {}}
-                        ></DishOption>
-                      ))}
-                  </Dish>
-                </Link>
-              ))}
-            </div>
+                    <Dish
+                      key={dish.id}
+                      id={dish.id}
+                      name={dish.name}
+                      description={dish.description}
+                      price={dish.price}
+                      options={dish.options}
+                      isSelected={isSelected(dish.id)}
+                      toggleDishOptions={!!toggleDishOptions}
+                      clickMode={!!dishBoxClickMode}
+                      addDishList={addDishList}
+                      removeDishList={removeDishList}
+                      hiddenType={dish.hidden}
+                    >
+                      {toggleDishOptions &&
+                        dish.options?.map((option, idx) => (
+                          <DishOption
+                            key={idx}
+                            dishId={dish.id}
+                            isSelected={false}
+                            name={option.name}
+                            extra={option.extra}
+                            addOptionToItem={() => {}}
+                            removeOptionFromItem={() => {}}
+                          ></DishOption>
+                        ))}
+                    </Dish>
+                  </Link>
+                ))}
+              </div>
+            </>
           )}
         </div>
+        {/* graph */}
         <div className="mt-20 mb-10">
           <h4 className="text-center text-2xl font-medium">Sales</h4>
           <div className="  mt-10">
@@ -438,10 +502,12 @@ export const MyRestaurant = () => {
                     dy={-20}
                   />
                 }
-                data={data?.myRestaurant.restaurant?.orders.map((order) => ({
-                  x: order.createdAt,
-                  y: order.total,
-                }))}
+                data={myRestaurantData?.myRestaurant.restaurant?.orders.map(
+                  (order) => ({
+                    x: order.createdAt,
+                    y: order.total,
+                  }),
+                )}
                 interpolation="natural"
                 style={{
                   data: {

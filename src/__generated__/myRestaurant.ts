@@ -35,6 +35,8 @@ export interface myRestaurant_myRestaurant_restaurant_menu {
   price: number;
   photo: string | null;
   description: string;
+  hidden: boolean;
+  order: number | null;
   options: myRestaurant_myRestaurant_restaurant_menu_options[] | null;
 }
 

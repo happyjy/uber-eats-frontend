@@ -35,6 +35,8 @@ export interface restaurantQeury_restaurant_restaurant_menu {
   price: number;
   photo: string | null;
   description: string;
+  hidden: boolean;
+  order: number | null;
   options: restaurantQeury_restaurant_restaurant_menu_options[] | null;
 }
 
