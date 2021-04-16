@@ -90,6 +90,7 @@ export interface EditDishInput {
   description?: string | null;
   options?: DishOptionInputType[] | null;
   hidden?: boolean | null;
+  order?: number | null;
   dishId: number;
 }
 

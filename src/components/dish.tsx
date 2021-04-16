@@ -59,8 +59,22 @@ export const Dish: React.FC<IDishProps> = ({
       }
     }
   };
+
+  // drag & drop
+  const onDishDrag = (e: any) => {
+    e.dataTransfer.setData("targetId", e.target.id);
+    let dragOrderContainerDom = e.target;
+    while (dragOrderContainerDom?.id.indexOf("dishOrderContainer") < 0) {
+      dragOrderContainerDom = dragOrderContainerDom.parentNode;
+    }
+    e.dataTransfer.setData("dragOrder", dragOrderContainerDom.id.split("|")[1]);
+  };
+
   return (
     <div
+      id={`dishIdContainer|${id}`}
+      draggable="true"
+      onDragStart={onDishDrag}
       className={`h-full px-8 py-4 border
       ${!hiddenType ? "transition-all cursor-pointer" : "bg-gray-200"}
       ${isSelected ? "border-gray-800" : "hover:border-gray-800"} `}

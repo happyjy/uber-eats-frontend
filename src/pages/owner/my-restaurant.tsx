@@ -91,10 +91,24 @@ const DELETE_DISH_MUTATION = gql`
 //     }
 //   }
 // `;
+// interface IDragNdrop {
+//   [index: string]: IDragNdropProperty | any;
+// }
+
+// interface IDragNdropProperty {
+//   id: string;
+//   order: number;
+// }
+interface IDragNdropProperty {
+  [index: string]: number;
+}
 
 export const MyRestaurant = () => {
   const [hiddenType, setHiddenType] = useState<HiddenType>(HiddenType.FALSE);
-  const [orderType, setorderType] = useState<OrderType>(OrderType.DESC);
+  const [orderType, setOrderType] = useState<OrderType>(OrderType.DESC);
+
+  // const [dragNdrop, setDragNdrop] = useState<[IDragNdropProperty]>();
+  const [dragNdrop, setDragNdrop] = useState<IDragNdropProperty[]>([]);
 
   const [clickedDishNumberList, setClickedDishNumberList] = useState<
     CreateOrderItemInput[]
@@ -205,20 +219,22 @@ export const MyRestaurant = () => {
   };
 
   const onToggleHiddenDish = () => {
-    // setToggleHideDishButton(!toggleDeleteDish);
     if (clickedDishNumberList.length === 0) {
       alert("click dish to hide");
       return;
     }
     type option = {
-      [key: string]: boolean | undefined;
+      [key: string]: any;
     };
 
     const result:
       | option
       | undefined = myRestaurantData?.myRestaurant.restaurant?.menu.reduce(
-      (prev, curr) => {
-        return { ...prev, [curr.id]: curr.hidden };
+      (prev: any, curr: any) => {
+        return {
+          ...prev,
+          [curr.id]: curr.hidden,
+        };
       },
       {},
     );
@@ -231,7 +247,6 @@ export const MyRestaurant = () => {
             input: {
               dishId: dishNumber.dishId,
               hidden: !hidden,
-              // hidden: !result[dishNumber.dishId],
             },
           },
         });
@@ -246,7 +261,6 @@ export const MyRestaurant = () => {
     ]);
   };
   const onDeleteDish = () => {
-    // setToggleDeleteDishButton(!toggleDeleteDish);
     if (clickedDishNumberList.length === 0) {
       alert("click dish to delete");
       return;
@@ -314,7 +328,62 @@ export const MyRestaurant = () => {
     setHiddenType(option);
   };
 
-  console.log("### my-restaurant > data: ", myRestaurantData);
+  // drag & drop
+  function onAllowDrop(e: any) {
+    e.preventDefault();
+  }
+  const onDishDrop = (e: any) => {
+    e.preventDefault();
+    let dropTargetDishOrderContainerDom = e.target;
+    let dropTargetDishIdContainerDom = e.target;
+    const dragTargetId = e.dataTransfer.getData("targetId");
+    const dragOrder = e.dataTransfer.getData("dragOrder");
+    const dragOrderContainerDom = `dishOrderContainer|${dragOrder}`;
+
+    while (
+      dropTargetDishOrderContainerDom?.id.indexOf("dishOrderContainer") < 0
+    ) {
+      dropTargetDishOrderContainerDom =
+        dropTargetDishOrderContainerDom.parentNode;
+    }
+    while (dropTargetDishIdContainerDom?.id.indexOf("dishIdContainer") < 0) {
+      dropTargetDishIdContainerDom = dropTargetDishIdContainerDom.parentNode;
+    }
+
+    dropTargetDishIdContainerDom.parentNode.removeChild(
+      dropTargetDishIdContainerDom,
+    );
+
+    // 순서 변경후 myRestaurant refetching 하기 때문에 dom조작 필요 없음.
+    // dropTargetDishOrderContainerDom.children[0].appendChild(
+    //   document.getElementById(dragTargetId),
+    // );
+
+    // console.log("### dragOrderContainerDom: ", dragOrderContainerDom);
+    // document
+    //   .getElementById(dragOrderContainerDom)
+    //   ?.appendChild(dropTargetDishIdContainerDom);
+
+    let dragId = dragTargetId.split("|")[1];
+    let dropId = dropTargetDishIdContainerDom.id.split("|")[1];
+    let dropOrder = dropTargetDishOrderContainerDom.id.split("|")[1];
+
+    const changeDishOrder = [
+      [[dragId], dropOrder],
+      [[dropId], dragOrder],
+    ];
+    changeDishOrder.forEach((v) => {
+      editDishMutation({
+        variables: {
+          input: {
+            dishId: +v[0],
+            order: +v[1],
+          },
+        },
+      });
+    });
+  };
+
   console.log(myRestaurantData?.myRestaurant.restaurant?.menu);
   return (
     <div>
@@ -434,49 +503,54 @@ export const MyRestaurant = () => {
               </div>
               <div className="grid mt-5 md:grid-cols-3 gap-x-5 gap-y-5">
                 {myRestaurantData?.myRestaurant.restaurant?.menu.map((dish) => (
-                  <Link
-                    // className="bg-yellow-200"
-                    key={dish.id}
-                    to={{
-                      pathname: `/restaurants/${restaurantId}/edit-dish`,
-                      state: {
-                        type: "EDIT",
-                        id: dish.id,
-                        name: dish.name,
-                        description: dish.description,
-                        price: dish.price,
-                        options: dish.options,
-                      },
-                    }}
+                  <div
+                    id={`dishOrderContainer|${dish.order}`}
+                    onDrop={onDishDrop}
+                    onDragOver={onAllowDrop}
                   >
-                    <Dish
+                    <Link
                       key={dish.id}
-                      id={dish.id}
-                      name={dish.name}
-                      description={dish.description}
-                      price={dish.price}
-                      options={dish.options}
-                      isSelected={isSelected(dish.id)}
-                      toggleDishOptions={!!toggleDishOptions}
-                      clickMode={!!dishBoxClickMode}
-                      addDishList={addDishList}
-                      removeDishList={removeDishList}
-                      hiddenType={dish.hidden}
+                      to={{
+                        pathname: `/restaurants/${restaurantId}/edit-dish`,
+                        state: {
+                          type: "EDIT",
+                          id: dish.id,
+                          name: dish.name,
+                          description: dish.description,
+                          price: dish.price,
+                          options: dish.options,
+                        },
+                      }}
                     >
-                      {toggleDishOptions &&
-                        dish.options?.map((option, idx) => (
-                          <DishOption
-                            key={idx}
-                            dishId={dish.id}
-                            isSelected={false}
-                            name={option.name}
-                            extra={option.extra}
-                            addOptionToItem={() => {}}
-                            removeOptionFromItem={() => {}}
-                          ></DishOption>
-                        ))}
-                    </Dish>
-                  </Link>
+                      <Dish
+                        key={dish.id}
+                        id={dish.id}
+                        name={dish.name}
+                        description={dish.description}
+                        price={dish.price}
+                        options={dish.options}
+                        isSelected={isSelected(dish.id)}
+                        toggleDishOptions={!!toggleDishOptions}
+                        clickMode={!!dishBoxClickMode}
+                        addDishList={addDishList}
+                        removeDishList={removeDishList}
+                        hiddenType={dish.hidden}
+                      >
+                        {toggleDishOptions &&
+                          dish.options?.map((option, idx) => (
+                            <DishOption
+                              key={idx}
+                              dishId={dish.id}
+                              isSelected={false}
+                              name={option.name}
+                              extra={option.extra}
+                              addOptionToItem={() => {}}
+                              removeOptionFromItem={() => {}}
+                            ></DishOption>
+                          ))}
+                      </Dish>
+                    </Link>
+                  </div>
                 ))}
               </div>
             </>
@@ -485,7 +559,7 @@ export const MyRestaurant = () => {
         {/* graph */}
         <div className="mt-20 mb-10">
           <h4 className="text-center text-2xl font-medium">Sales</h4>
-          <div className="  mt-10">
+          <div className="mt-10">
             <VictoryChart
               height={500}
               theme={VictoryTheme.material}
@@ -503,7 +577,7 @@ export const MyRestaurant = () => {
                   />
                 }
                 data={myRestaurantData?.myRestaurant.restaurant?.orders.map(
-                  (order) => ({
+                  (order: any) => ({
                     x: order.createdAt,
                     y: order.total,
                   }),
