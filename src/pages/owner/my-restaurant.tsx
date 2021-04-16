@@ -34,15 +34,13 @@ import { EDIT_DISH_MUTATION } from "./add-dish";
 import {
   myRestaurant,
   myRestaurantVariables,
+  myRestaurant_myRestaurant_restaurant_orders,
 } from "../../__generated__/myRestaurant";
 import {
   deleteDish,
   deleteDishVariables,
 } from "../../__generated__/deleteDish";
-
-interface IParams {
-  restaurantId: string;
-}
+import { Order } from "../order";
 
 export const MY_RESTAURANT_QUERY = gql`
   query myRestaurant($input: MyRestaurantInput!) {
@@ -83,32 +81,18 @@ const DELETE_DISH_MUTATION = gql`
   }
 `;
 
-// const EDIT_DISH_MUTATION = gql`
-//   mutation editDish($input: EditDishInput!) {
-//     editDish(input: $input) {
-//       ok
-//       error
-//     }
-//   }
-// `;
-// interface IDragNdrop {
-//   [index: string]: IDragNdropProperty | any;
-// }
-
-// interface IDragNdropProperty {
-//   id: string;
-//   order: number;
-// }
 interface IDragNdropProperty {
   [index: string]: number;
+}
+interface IParams {
+  restaurantId: string;
 }
 
 export const MyRestaurant = () => {
   const [hiddenType, setHiddenType] = useState<HiddenType>(HiddenType.FALSE);
   const [orderType, setOrderType] = useState<OrderType>(OrderType.DESC);
 
-  // const [dragNdrop, setDragNdrop] = useState<[IDragNdropProperty]>();
-  const [dragNdrop, setDragNdrop] = useState<IDragNdropProperty[]>([]);
+  // const [dragNdrop, setDragNdrop] = useState<IDragNdropProperty[]>([]);
 
   const [clickedDishNumberList, setClickedDishNumberList] = useState<
     CreateOrderItemInput[]
@@ -122,8 +106,6 @@ export const MyRestaurant = () => {
   const [toggleHideDishButton, setToggleHideDishButton] = useState<Boolean>(
     false,
   );
-  // const [toggleDeleteDish, setToggleDeleteDish] = useState<Boolean>(false);
-  // const [toggleHideDish, setToggleHideDish] = useState<Boolean>(false);
 
   const [stopNavigating, setStopNavigating] = useState<Boolean>(false);
   const [toggleDishOptions, setToggleDishOptions] = useState<Boolean>(false);
@@ -141,6 +123,9 @@ export const MyRestaurant = () => {
     myRestaurant,
     myRestaurantVariables
   >(MY_RESTAURANT_QUERY, {
+    onCompleted: (v) => {
+      console.log("### myRestaurantData useQuery: ", v);
+    },
     variables: {
       input: {
         id: +restaurantId,
@@ -150,6 +135,8 @@ export const MyRestaurant = () => {
     },
     fetchPolicy: "cache-and-network",
   });
+
+  // myRestaurantData?.myRestaurant.restaurant?.orders.shift();
 
   const [deletedishMutation, { loading }] = useMutation<
     deleteDish,
@@ -384,7 +371,40 @@ export const MyRestaurant = () => {
     });
   };
 
-  console.log(myRestaurantData?.myRestaurant.restaurant?.menu);
+  const orders = myRestaurantData?.myRestaurant.restaurant?.orders
+    .map((order) => ({
+      x: order.createdAt,
+      y: order.total,
+    }))
+    .sort((a, b) => {
+      return +new Date(a.x) - +new Date(b.x);
+    })
+    .map((order: any) => {
+      console.log("### 2nd Map: ", order);
+      return { x: new Date(order.x).toDateString(), y: order.y };
+    });
+
+  let resultGraph = [];
+  if (orders && orders.length > 0) {
+    let tempObj;
+    for (let i = 0; i < orders.length; i++) {
+      tempObj = { x: orders[i].x, y: orders[i].y };
+      resultGraph.push(tempObj);
+      if (i != 0) {
+        let compare2 = resultGraph.pop();
+        let compare1 = resultGraph.pop();
+        if (compare2 && compare1) {
+          if (compare2.x === compare1.x) {
+            resultGraph.push({ x: compare1.x, y: compare1.y + compare2.y });
+          } else {
+            resultGraph.push({ ...compare1 });
+            resultGraph.push({ ...compare2 });
+          }
+        }
+      }
+    }
+  }
+  console.log("##### result : ", resultGraph);
   return (
     <div>
       <Helmet>
@@ -576,12 +596,10 @@ export const MyRestaurant = () => {
                     dy={-20}
                   />
                 }
-                data={myRestaurantData?.myRestaurant.restaurant?.orders.map(
-                  (order: any) => ({
-                    x: order.createdAt,
-                    y: order.total,
-                  }),
-                )}
+                data={resultGraph.map((order) => ({
+                  x: order.x,
+                  y: order.y,
+                }))}
                 interpolation="natural"
                 style={{
                   data: {
